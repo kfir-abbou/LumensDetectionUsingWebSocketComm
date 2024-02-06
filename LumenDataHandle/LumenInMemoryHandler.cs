@@ -19,7 +19,7 @@ namespace LumenDetection.Tests.LumenDataHandle
 		// private object _locker = new();
 		private readonly CommInfra _commInfra;
 		private readonly IDictionary<string, UpdateNewImageRequestMessageData> _framesHandled = new ConcurrentDictionary<string, UpdateNewImageRequestMessageData>();
-		private object _locker;
+		// private object _locker;
 
 		public event EventHandler<UpdateImageResponseReceivedEventArgs> LumensMessageReceived;
 
@@ -39,8 +39,6 @@ namespace LumenDetection.Tests.LumenDataHandle
 		{
 			try
 			{
-				// var jsonResponse = Encoding.UTF8.GetString(responseMessageFromAlgo);
-				// var response = JsonConvert.DeserializeObject<UpdateNewImageResponseMessage>(jsonResponse);
 				var response =
 					WebSocketMessageResponse<UpdateNewImageResponseMessage>.FromJson(responseMessageFromAlgo);
 
@@ -48,7 +46,6 @@ namespace LumenDetection.Tests.LumenDataHandle
 				{
 					if (updateImgRequest.ImageId == response.messageData.MessageData.ImageId)
 					{
-						// var data = new VideoFrameWithLumenMessage(frame.Id, frame.FrameAsString, response.Lumens);
 						LumensMessageReceived?.Invoke(null, new UpdateImageResponseReceivedEventArgs(response.messageData.MessageData, updateImgRequest.ImageData));
 
 						_framesHandled.Remove(response.messageData.MessageData.ImageId);
