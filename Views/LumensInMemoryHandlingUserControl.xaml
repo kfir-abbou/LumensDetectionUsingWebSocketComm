@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="LumenDetection.Tests.Views.LumensInMemoryHandlingUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModels="clr-namespace:LumenDetection.Tests.ViewModels"
+             mc:Ignorable="d"
+             Background="Black">
+    <UserControl.DataContext>
+        <viewModels:LumensInMemoryHandlingViewModel/>
+    </UserControl.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+             Text="{Binding PlayVideoText}"
+             FontSize="20"
+             Foreground="White" />
+
+        <Grid Grid.Row="1">
+            <Image  Source="{Binding CurrentFrame}" HorizontalAlignment="Left"/>
+            <ItemsControl ItemsSource="{Binding Circles}" HorizontalAlignment="Left">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="{Binding Radius}" Height="{Binding Radius}" Stroke="DarkRed" StrokeThickness="2">
+                            <Ellipse.RenderTransform>
+                                <TranslateTransform X="{Binding X}" Y="{Binding Y}" />
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+    </Grid>
+</UserControl>  
+
+
+
+<!-- <TextBlock Grid.Row="0" -->
+<!--      Text="Play video file:" -->
+<!--      FontSize="20"/> -->
+<!-- <Grid Grid.Row="1" > -->
+<!--     ~1~ <MediaElement x:Name="mediaElement" Source="C:\Temp\Video\Bronchoscope_640x480.avi" LoadedBehavior="Play" UnloadedBehavior="Stop" Stretch="Fill"/> @1@ -->
+<!--     ~1~ <ItemsControl ItemsSource="{Binding Circles}"> @1@ -->
+<!--     ~1~     <ItemsControl.ItemsPanel> @1@ -->
+<!--     ~1~         <ItemsPanelTemplate> @1@ -->
+<!--     ~1~             <Canvas /> @1@ -->
+<!--     ~1~         </ItemsPanelTemplate> @1@ -->
+<!--     ~1~     </ItemsControl.ItemsPanel> @1@ -->
+<!--     ~1~     <ItemsControl.ItemTemplate> @1@ -->
+<!--     ~1~         <DataTemplate> @1@ -->
+<!--     ~1~             <Ellipse Width="{Binding Radius}" Height="{Binding Radius}" Stroke="Aquamarine" StrokeThickness="2"> @1@ -->
+<!--     ~1~                 <Ellipse.RenderTransform> @1@ -->
+<!--     ~1~                     <TranslateTransform X="{Binding X}" Y="{Binding Y}" /> @1@ -->
+<!--     ~1~                 </Ellipse.RenderTransform> @1@ -->
+<!--     ~1~             </Ellipse> @1@ -->
+<!--     ~1~         </DataTemplate> @1@ -->
+<!--     ~1~     </ItemsControl.ItemTemplate> @1@ -->
+<!--     ~1~ </ItemsControl> @1@ -->
+<!-- </Grid> -->

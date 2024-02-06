@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LumenDetection.Tests", "LumenDetection.Tests.csproj", "{CDA16A70-D125-445C-908A-A672DBB3B87D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Comm\Client\Client.csproj", "{3A7AD9C5-F2C3-4435-8D8F-AC9F5E9F8282}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Comm\Server\Server.csproj", "{B6501370-097E-4188-AF10-382B8757851D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Comm.Model", "Comm.Model\Comm.Model\Comm.Model.csproj", "{288A0DC7-8BAA-4AD7-8ACB-23E46A139991}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{EE6FAC90-6CE5-421F-9F9B-7F94D5936A97}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AForge.Video.Reader", "AForge.Video.Reader\AForge.Video.Reader.csproj", "{58684CB4-7B6C-483F-8446-A85B4DAD39EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server2", "Comm\Server2\Server2.csproj", "{8ABBDE53-1DF8-47E2-93BC-B5596FE437B9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CDA16A70-D125-445C-908A-A672DBB3B87D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDA16A70-D125-445C-908A-A672DBB3B87D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDA16A70-D125-445C-908A-A672DBB3B87D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDA16A70-D125-445C-908A-A672DBB3B87D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A7AD9C5-F2C3-4435-8D8F-AC9F5E9F8282}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A7AD9C5-F2C3-4435-8D8F-AC9F5E9F8282}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A7AD9C5-F2C3-4435-8D8F-AC9F5E9F8282}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A7AD9C5-F2C3-4435-8D8F-AC9F5E9F8282}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6501370-097E-4188-AF10-382B8757851D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6501370-097E-4188-AF10-382B8757851D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6501370-097E-4188-AF10-382B8757851D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6501370-097E-4188-AF10-382B8757851D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{288A0DC7-8BAA-4AD7-8ACB-23E46A139991}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{288A0DC7-8BAA-4AD7-8ACB-23E46A139991}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{288A0DC7-8BAA-4AD7-8ACB-23E46A139991}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{288A0DC7-8BAA-4AD7-8ACB-23E46A139991}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE6FAC90-6CE5-421F-9F9B-7F94D5936A97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE6FAC90-6CE5-421F-9F9B-7F94D5936A97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE6FAC90-6CE5-421F-9F9B-7F94D5936A97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE6FAC90-6CE5-421F-9F9B-7F94D5936A97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58684CB4-7B6C-483F-8446-A85B4DAD39EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58684CB4-7B6C-483F-8446-A85B4DAD39EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58684CB4-7B6C-483F-8446-A85B4DAD39EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58684CB4-7B6C-483F-8446-A85B4DAD39EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8ABBDE53-1DF8-47E2-93BC-B5596FE437B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8ABBDE53-1DF8-47E2-93BC-B5596FE437B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8ABBDE53-1DF8-47E2-93BC-B5596FE437B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8ABBDE53-1DF8-47E2-93BC-B5596FE437B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AA6A28A3-BA32-4102-98CD-CAAE566A57AD}
+	EndGlobalSection
+EndGlobal

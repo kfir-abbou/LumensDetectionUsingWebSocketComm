@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="LumenDetection.Tests.Views.LumensOnVideoStream"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModels="clr-namespace:LumenDetection.Tests.ViewModels"
+             mc:Ignorable="d"
+             Background="Black">
+
+    <UserControl.DataContext>
+        <viewModels:LumenOnVideoViewModel/>
+    </UserControl.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Lumens On Video Stream" 
+                   FontSize="20"
+                   Foreground="White"/>
+        <Grid Grid.Row="1">
+            <Image  Source="{Binding CurrentFrame}" HorizontalAlignment="Left"/>
+            <ItemsControl ItemsSource="{Binding Circles}" HorizontalAlignment="Left">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="{Binding Radius}" Height="{Binding Radius}" Stroke="DarkRed" StrokeThickness="2">
+                            <Ellipse.RenderTransform>
+                                <TranslateTransform X="{Binding X}" Y="{Binding Y}" />
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+    </Grid>
+</UserControl>
