@@ -62,42 +62,42 @@ namespace Server2
 			_clientSocketID = -1;
 		}
 		
-		private void _webSocketServer_BinaryMessageReceived(byte[] buffer, int socketID)
-		{
-			// Console.WriteLine($"WebSocket BinaryMessageReceived{socketID} closed");
-			try
+			private void _webSocketServer_BinaryMessageReceived(byte[] buffer, int socketID)
 			{
-				var jsonText = Encoding.UTF8.GetString(buffer);
-				var message = JsonConvert.DeserializeObject<FrameMessage>(jsonText);
-
-				var frameAsBytes = Convert.FromBase64String(message.FrameAsString);
-				var frame = _videoFrameReader.ConvertFrameFromBytes(frameAsBytes);
-
-				if (frame != null)
+				// Console.WriteLine($"WebSocket BinaryMessageReceived{socketID} closed");
+				try
 				{
-					// TODO: add lumen's data and send response
-					var lumenData = simulateAlgoAndGetLumens();
-					// var frameAsString = Convert.ToBase64String(frameAsBytes);
+					var jsonText = Encoding.UTF8.GetString(buffer);
+					var message = JsonConvert.DeserializeObject<FrameMessage>(jsonText);
 
-					var responseData = new UpdateNewImageResponseMessageData(DateTime.Now.Ticks.ToString(), message.Id, lumenData);
-					var response = new UpdateNewImageResponseMessage(responseData);
-					// var jsonResponse = JsonConvert.SerializeObject(response);
-					var jsonResponse =
-						new WebSocketMessageResponse<UpdateNewImageResponseMessage>(response.MessageHeader,
-							status: "OK", response).ToJSON();
-					var data = Encoding.UTF8.GetBytes(jsonResponse);
+					var frameAsBytes = Convert.FromBase64String(message.FrameAsString);
+					var frame = _videoFrameReader.ConvertFrameFromBytes(frameAsBytes);
 
-					// var delay = _random.Next(10, 20);
-					// Thread.Sleep(delay);
-					_webSocketServer.SendBinary(data, _clientSocketID);
+					if (frame != null)
+					{
+						// TODO: add lumen's data and send response
+						var lumenData = simulateAlgoAndGetLumens();
+						// var frameAsString = Convert.ToBase64String(frameAsBytes);
+
+						var responseData = new UpdateNewImageResponseMessageData(DateTime.Now.Ticks.ToString(), message.Id, lumenData);
+						var response = new UpdateNewImageResponseMessage(responseData);
+						// var jsonResponse = JsonConvert.SerializeObject(response);
+						var jsonResponse =
+							new WebSocketMessageResponse<UpdateNewImageResponseMessage>(response.MessageHeader,
+								status: "OK", response).ToJSON();
+						var data = Encoding.UTF8.GetBytes(jsonResponse);
+
+						// var delay = _random.Next(10, 20);
+						// Thread.Sleep(delay);
+						_webSocketServer.SendBinary(data, _clientSocketID);
+					}
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+					throw;
 				}
 			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e);
-				throw;
-			}
-		}
 
 		private IEnumerable<LumensCoordinates> simulateAlgoAndGetLumens()
 		{

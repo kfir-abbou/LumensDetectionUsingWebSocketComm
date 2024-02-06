@@ -6,6 +6,10 @@
 		public double Y { get; set; }
 		public double Radius { get; set; }
 
+		public LumensCoordinates()
+		{
+			
+		}
 		public LumensCoordinates(double x, double y, double radius)
 		{
 			X = x;
