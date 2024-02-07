@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using Comm.Model;
 using LumenDetection.Tests.CommonHelper;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace LumenDetection.Tests.ViewModels
@@ -57,21 +58,24 @@ namespace LumenDetection.Tests.ViewModels
 			_lumenDataHandler.LumensMessageReceived += onLumensMessageReceived;
 		}
 		 
+		private readonly Stopwatch _stopwatch = new Stopwatch();
 
 		private void onLumensMessageReceived(object sender, UpdateImageResponseReceivedEventArgs eventArgs)
 		{
 			try
 			{
+				_stopwatch.Restart();
 				Application.Current.Dispatcher.InvokeAsync(() => // Ensure UI updates on the UI thread
 				{
 					var bitmapImage = DrawLumensHelper.ConvertVideoFrameByteArrayToBitmapSource(eventArgs.FrameBytes);
-					var win = Application.Current.MainWindow;
 					var lumens = DrawLumensHelper.ConvertDataToFitScreen(eventArgs.Response.LumensCoordinates);
 
 					CurrentFrame = bitmapImage;
 					Circles.Clear();
 					addCircles(lumens);
 				});
+				_stopwatch.Stop();
+				// var total = _stopwatch.Elapsed.TotalMilliseconds;
 			}
 			catch (Exception e)
 			{

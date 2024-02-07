@@ -7,6 +7,7 @@ using LumenDetection.Tests.CommonHelper;
 using LumenDetection.Tests.Model;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using AForge.Video.Reader;
@@ -44,28 +45,30 @@ namespace LumenDetection.Tests.ViewModels
 			_lumenOnVideoStreamHandler.LumensMessageReceived += LumenOnVideoStreamHandlerOnLumensMessageReceived;
 		}
 
+		private Stopwatch _sw = new Stopwatch();
 		private void onActivated(object sender, EventArgs e)
 		{
 			Task.Run(async () =>
 			{
 				try
 				{
-					// var frames = _vfr.GetVideoFileBytes(@"C:\Temp\Video\ct.avi");
 					var frames = _vfr.GetVideoFrames(@"C:\Temp\Video\ct.avi");
 					// var frames = _vfr.GetVideoFrames(@"C:\Temp\Video\video.mp4");
 					foreach (var frame in frames)
 					{
 						var frameBytes = _vfr.ConvertFrameToBytes(frame);
-						// TODO: handle thread switch:
-						await _lumenOnVideoStreamHandler.HandleVideoFrame((uint)frame.Width, (uint)frame.Height, frameBytes);
 						
+						await _lumenOnVideoStreamHandler.HandleVideoFrame((uint)frame.Width, (uint)frame.Height, frameBytes);
+
+						_sw.Restart();
 						Application.Current.Dispatcher.InvokeAsync(() =>
 						{
 							var bitmapSource = DrawLumensHelper.ConvertVideoFrameByteArrayToBitmapSource(frameBytes);
 							CurrentFrame = bitmapSource;
 						});
-
-						await Task.Delay(33);
+						_sw.Stop();
+						var t = _sw.Elapsed.TotalMilliseconds;
+						await Task.Delay(38);
 					}
 				}
 				catch (Exception exception)

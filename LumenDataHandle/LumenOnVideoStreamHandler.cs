@@ -4,6 +4,7 @@ using LumenDetection.Tests.Comm.Client;
 using SD.Framework.Infrastructure.IPCCommunication;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,12 +35,18 @@ namespace LumenDetection.Tests.LumenDataHandle
 			{
 				LumensMessageReceived?.Invoke(null, lumensCoords);
 			}
+			_sw.Stop();
+			var t = _sw.Elapsed.TotalMilliseconds;
+			Console.WriteLine($"Invoke: {t}");
 		}
+
+		private Stopwatch _sw  = new Stopwatch();
 
 		public Task HandleVideoFrame(uint width, uint height, byte[] frame)
 		{
 			try
 			{
+				_sw.Restart();
 				sendUpdateImageRequest(width, height, frame);
 			}
 			catch (Exception e)
@@ -69,7 +76,6 @@ namespace LumenDetection.Tests.LumenDataHandle
  
 
 			var delta = (int)((nowTicks - ticks) / TICKS_IN_MILI);
-			Console.WriteLine(delta);
 			return delta;
 		}
 	}
