@@ -23,8 +23,7 @@ namespace LumenDetection.Tests.ViewModels
 		private readonly LumenInMemoryHandler _lumenDataHandler;
 
 		private BitmapSource _currentFrame;
-		private double _screenWidth;
-		private double _screenHeight;
+	 
 		private string _playVideoText;
 
 		public ObservableCollection<Circle> Circles { get; set; }
@@ -57,7 +56,6 @@ namespace LumenDetection.Tests.ViewModels
 			_lumenDataHandler = new LumenInMemoryHandler(new CommInfra("localhost", "example", 8074));
 			_lumenDataHandler.LumensMessageReceived += onLumensMessageReceived;
 		}
-
 		 
 
 		private void onLumensMessageReceived(object sender, UpdateImageResponseReceivedEventArgs eventArgs)
@@ -66,7 +64,6 @@ namespace LumenDetection.Tests.ViewModels
 			{
 				Application.Current.Dispatcher.InvokeAsync(() => // Ensure UI updates on the UI thread
 				{
-					// var frameAsBytes = Convert.FromBase64String(response.FrameAsString);
 					var bitmapImage = DrawLumensHelper.ConvertVideoFrameByteArrayToBitmapSource(eventArgs.FrameBytes);
 					var win = Application.Current.MainWindow;
 					var lumens = DrawLumensHelper.ConvertDataToFitScreen(eventArgs.Response.LumensCoordinates);
@@ -74,7 +71,6 @@ namespace LumenDetection.Tests.ViewModels
 					CurrentFrame = bitmapImage;
 					Circles.Clear();
 					addCircles(lumens);
-
 				});
 			}
 			catch (Exception e)
@@ -97,11 +93,8 @@ namespace LumenDetection.Tests.ViewModels
 			Circles.Add(new Circle { X = x, Y = y, Radius = radius });
 		}
 
-
 		private void onActivated(object sender, EventArgs e)
 		{
-			_screenWidth = Application.Current.MainWindow.ActualWidth;
-			_screenHeight = Application.Current.MainWindow.ActualHeight;
 			Application.Current.Dispatcher.Invoke(() => PlayVideoText = "In Memory handler:");
 
 			Task.Run(async () =>
@@ -134,13 +127,10 @@ namespace LumenDetection.Tests.ViewModels
 				foreach (var frame in frames)
 				{
 					var frameAsBytes = _vfr.ConvertFrameToBytes(frame);
-					// var id = DateTime.Now.Ticks.ToString();
-					// _commInfra.SendFrameMessage(id, frameAsBytes);
 					await _lumenDataHandler.HandleVideoFrame((uint)frame.Width, (uint)frame.Height, frameAsBytes);
 					await Task.Delay(33);
 				}
 			});
-			// return Task.CompletedTask;
 		}
 
 
@@ -148,7 +138,6 @@ namespace LumenDetection.Tests.ViewModels
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
-
 
 	}
 }

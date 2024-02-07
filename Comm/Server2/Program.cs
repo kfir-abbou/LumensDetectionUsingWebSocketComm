@@ -4,10 +4,13 @@ using Newtonsoft.Json;
 using SD.Framework.Infrastructure.IPCCommunication;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using Comm.Model.LumenDetectionApi;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace Server2
 {
@@ -18,12 +21,14 @@ namespace Server2
 		private VideoFrameReader _videoFrameReader;
 		private bool _sendTaskRunning = false;
 		private Random _random;
+		private ConcurrentQueue<byte[]> _messagesQueue = new ConcurrentQueue<byte[]>();
 
 		static void Main(string[] args)
 		{
 			Program p = new Program();
 			CancellationTokenSource token = new CancellationTokenSource();
 			Task ts = p.Run(token);
+
 			Console.ReadKey();
 		}
 
@@ -41,6 +46,9 @@ namespace Server2
 				_webSocketServer.BinaryMessageReceived += _webSocketServer_BinaryMessageReceived;
 				_webSocketServer.SocketClosed += _webSocketServer_SocketClosed;
 				await _webSocketServer.StartServer("localhost", "example2", 8075);
+				await Task.Run(handleMessageOnQueue);
+
+
 			}
 			catch (Exception exception)
 			{
@@ -64,35 +72,81 @@ namespace Server2
 
 		private void _webSocketServer_BinaryMessageReceived(byte[] buffer, int socketID)
 		{
-			try
-			{
-				var message = WebSocketMessageRequest<UpdateNewImageMessage>.FromJson(buffer);
-				var frame = _videoFrameReader.ConvertFrameFromBytes(message.messageData.MessageData.ImageData);
+			_messagesQueue.Enqueue(buffer);
+		}
 
-				if (frame != null)
+
+		private readonly Stopwatch _sw = new Stopwatch();
+		private readonly UpdateNewImageResponseMessageData _updateNewImageResponseMessageData = new UpdateNewImageResponseMessageData();
+		private readonly UpdateNewImageResponseMessage _updateNewImageResponseMessage = new UpdateNewImageResponseMessage();
+
+
+		private async Task handleMessageOnQueue()
+		{
+			while (true)
+			{
+				if (_messagesQueue.Any())
 				{
-					// TODO: add lumen's data and send response
-					var lumenData = simulateAlgoAndGetLumens();
-					// var frameAsString = Convert.ToBase64String(frameAsBytes);
+					_sw.Start();
 
-					var responseData = new UpdateNewImageResponseMessageData(DateTime.Now.Ticks.ToString(), message.messageData.MessageData.ImageId, lumenData);
-					var response = new UpdateNewImageResponseMessage(responseData);
-					// var jsonResponse = JsonConvert.SerializeObject(response);
-					var jsonResponse =
-						new WebSocketMessageResponse<UpdateNewImageResponseMessage>(response.MessageHeader,
-							status: "OK", response).ToJSON();
-					var data = Encoding.UTF8.GetBytes(jsonResponse);
+					try
+					{
+						var dequeued = _messagesQueue.TryDequeue(out byte[] bytes);
+						if (dequeued)
+						{
+							var message = WebSocketMessageRequest<UpdateNewImageMessage>.FromJson(bytes);
+							// _sw.Stop();
+							// var deserializeJson = _sw.Elapsed.TotalMilliseconds;
+							// _sw.Restart();
+							//
+							var frame = _videoFrameReader.ConvertFrameFromBytes(message.messageData.MessageData.ImageData);
 
-					// var delay = _random.Next(10, 20);
-					// Thread.Sleep(delay);
-					_webSocketServer.SendBinary(data, _clientSocketID);
+							if (frame != null)
+							{
+								// TODO: add lumen's data and send response
+								var lumenData = simulateAlgoAndGetLumens();
+
+								initMessageData(DateTime.Now.Ticks.ToString(), message.messageData.MessageData.ImageId, lumenData);
+								var response = initResponse(_updateNewImageResponseMessageData);
+							
+								// _sw.Stop();
+								// var t = _sw.Elapsed;
+								// _sw.Restart();
+								
+								var jsonResponse =
+									new WebSocketMessageResponse<UpdateNewImageResponseMessage>(response.MessageHeader,
+										status: "OK", response).ToJSON();
+								var data = Encoding.UTF8.GetBytes(jsonResponse);
+
+								_webSocketServer.SendBinary(data, _clientSocketID);
+							}
+							
+							_sw.Stop();
+							var total = _sw.Elapsed.TotalMilliseconds;
+						}
+					}
+					catch (Exception e)
+					{
+						Console.WriteLine(e);
+						throw;
+					}
 				}
+
+				await Task.Delay(1);
 			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e);
-				throw;
-			}
+		}
+
+		private UpdateNewImageResponseMessage initResponse(UpdateNewImageResponseMessageData responseData)
+		{
+			_updateNewImageResponseMessage.MessageData = responseData;
+			return _updateNewImageResponseMessage;
+		}
+
+		private void initMessageData(string id, string msgId, IEnumerable<LumensCoordinates> lumensCoordinates)
+		{
+			_updateNewImageResponseMessageData.TimeStamp = id;
+			_updateNewImageResponseMessageData.ImageId = msgId;
+			_updateNewImageResponseMessageData.LumensCoordinates = lumensCoordinates;
 		}
 
 		// private void _webSocketServer_BinaryMessageReceived(byte[] buffer, int socketID)

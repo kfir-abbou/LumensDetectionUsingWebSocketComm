@@ -13,13 +13,13 @@ namespace LumenDetection.Tests.Comm.Client
 {
 	public class CommInfra : WebsocketInfra
 	{
-		private Queue<byte[]> _messageQueue = new();
+		private readonly Queue<byte[]> _messageQueue = new();
 
 		public event EventHandler<UpdateNewImageResponseMessage> UpdateImageResponse;
 
 		public CommInfra(string address, string addressPostfix, int port) : base(address, addressPostfix, port)
 		{
-			this.BinaryMessageReceived += handleBinaryMessage;
+			BinaryMessageReceived += handleBinaryMessage;
 			Task.Run(handleMessagesInQueue);
 		}
 

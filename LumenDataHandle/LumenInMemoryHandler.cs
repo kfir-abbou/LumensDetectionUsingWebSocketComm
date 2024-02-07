@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Media.Media3D;
 using Comm.Model;
 using Comm.Model.LumenDetectionApi;
 using LumenDetection.Tests.Comm.Client;
-using Newtonsoft.Json;
 using SD.Framework.Infrastructure.IPCCommunication;
 
 namespace LumenDetection.Tests.LumenDataHandle
@@ -53,8 +49,6 @@ namespace LumenDetection.Tests.LumenDataHandle
 
 				sendUpdateImageRequest(id, width, height, frame);
 
-				var frameAsString = Convert.ToBase64String(frame);
-
 				if (!_framesHandled.ContainsKey(id))
 				{
 					_framesHandled.Add(id, new UpdateNewImageRequestMessageData(ts, id, width, height, frame));
@@ -69,29 +63,12 @@ namespace LumenDetection.Tests.LumenDataHandle
 
 			return Task.CompletedTask;
 		}
-
-		// public byte[] TryGetFrame(string id)
-		// {
-		//
-		// 	var frameExists = _framesHandled.TryGetValue(id, out var frameMsg);
-		// 	if (frameExists)
-		// 	{
-		//
-		// 		return frameMsg.ImageData;
-		// 	}
-		//
-		// 	return null;
-		// }
-
-		// private void sendFrameMessage(string id, uint width, uint height, byte[] frame)
-		// {
-		// 	_commInfra.SendUpdateImageMessage(id, width, height, frame);
-		// }
+ 
 		private void sendUpdateImageRequest(string id, uint width, uint height, byte[] frame)
 		{
 			var ts = DateTime.Now.Ticks;
 
-			var msgData = new UpdateNewImageRequestMessageData(ts, id, width, height, frame);
+			var msgData = new UpdateNewImageRequestMessageData(ts, ts.ToString(), width, height, frame);
 			var updateImgReq = new UpdateNewImageMessage(msgData);
 			var req = new WebSocketMessageRequest<UpdateNewImageMessage>(updateImgReq.MessageHeader, updateImgReq);
 			_commInfra.SendUpdateImageMessage(req);

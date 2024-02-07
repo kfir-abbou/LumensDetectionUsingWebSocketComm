@@ -1,12 +1,10 @@
 ﻿using Comm.Model;
 using Comm.Model.LumenDetectionApi;
 using LumenDetection.Tests.Comm.Client;
-using Newtonsoft.Json;
 using SD.Framework.Infrastructure.IPCCommunication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LumenDetection.Tests.LumenDataHandle
@@ -22,8 +20,6 @@ namespace LumenDetection.Tests.LumenDataHandle
 
 		public LumenOnVideoStreamHandler(CommInfra commInfra)
 		{
-			// _commInfra = commInfra;
-			// _commInfra.BinaryMessageReceived += onBinaryMessageReceived;
 			_commInfra = commInfra;
 			_commInfra.UpdateImageResponse += onUpdateImageResponse;
 		}
@@ -31,36 +27,20 @@ namespace LumenDetection.Tests.LumenDataHandle
 		private void onUpdateImageResponse(object sender, UpdateNewImageResponseMessage response)
 		{
 			var lumensCoords = response.MessageData.LumensCoordinates;
+			var id = response.MessageData.ImageId;
+			var deltaInMilli = calculateTimeDiffFromId(id);
 
-			if (lumensCoords.Any())
+			if ( lumensCoords.Any()) //deltaInMilli < 1150 &&
 			{
 				LumensMessageReceived?.Invoke(null, lumensCoords);
 			}
 		}
 
-		// private void onBinaryMessageReceived(object sender, byte[] responseMessageFromAlgo)
-		// {
-		// 	var jsonResponse = Encoding.UTF8.GetString(responseMessageFromAlgo);
-		// 	var response = JsonConvert.DeserializeObject<LumenDataMessage>(jsonResponse);
-		//
-		// 	var timeDiffInMilliseconds = calculateTimeDiffFromId(response.Id);
-		//
-		// 	if (timeDiffInMilliseconds < MAX_DELAY)
-		// 	{
-		// 		var data = new LumenDataMessage(response.Id, response.Lumens);
-		// 		LumensMessageReceived?.Invoke(null, data);
-		// 	}
-		//
-		// }
-
-		private long _idCounter = 0;
 		public Task HandleVideoFrame(uint width, uint height, byte[] frame)
 		{
 			try
 			{
-				var id = DateTime.Now.Ticks.ToString();
-				// _idCounter++;
-				sendUpdateImageRequest(id, width, height, frame);
+				sendUpdateImageRequest(width, height, frame);
 			}
 			catch (Exception e)
 			{
@@ -71,17 +51,11 @@ namespace LumenDetection.Tests.LumenDataHandle
 			return Task.CompletedTask;
 		}
 
-		// private void sendFrameMessage(string id, byte[] frame)
-		// {
-		// 	// _commInfra.SendFrameMessage(id, frame);
-		// 	_commInfra.
-		// }
-
-		private void sendUpdateImageRequest(string id, uint width, uint height, byte[] frame)
+		 
+		private void sendUpdateImageRequest(uint width, uint height, byte[] frame)
 		{
 			var ts = DateTime.Now.Ticks;
-
-			var msgData = new UpdateNewImageRequestMessageData(ts, id, width, height, frame);
+			var msgData = new UpdateNewImageRequestMessageData(ts, ts.ToString(), width, height, frame);
 			var updateImgReq = new UpdateNewImageMessage(msgData);
 			var req = new WebSocketMessageRequest<UpdateNewImageMessage>(updateImgReq.MessageHeader, updateImgReq);
 			_commInfra.SendUpdateImageMessage(req);
@@ -90,14 +64,13 @@ namespace LumenDetection.Tests.LumenDataHandle
 
 		private int calculateTimeDiffFromId(string responseId)
 		{
-			// var ticks = Convert.ToDouble(responseId);
-			// var nowTicks = DateTime.Now.Ticks;
-			
+			var nowTicks = DateTime.Now.Ticks;
+			var ticks = Convert.ToDouble(responseId);
+ 
 
-			// return (int)((nowTicks - ticks) / TICKS_IN_MILI);
-			var resId = Convert.ToDouble(responseId);
-
-			return (int) (resId - _idCounter);
+			var delta = (int)((nowTicks - ticks) / TICKS_IN_MILI);
+			Console.WriteLine(delta);
+			return delta;
 		}
 	}
 }

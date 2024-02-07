@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Comm.Model;
 using SD.Framework.Infrastructure.IPCCommunication;
 
 namespace LumenDetection.Tests.Comm.Client
@@ -12,9 +8,9 @@ namespace LumenDetection.Tests.Comm.Client
 	public class WebsocketInfra
 	{
 		protected WebSocketClient _websocketClient;
-		private string _address;
-		private string _addressPostfix;
-		private int _port;
+		private readonly string _address;
+		private readonly string _addressPostfix;
+		private readonly int _port;
 
 		public event EventHandler<string> TextMessageReceived;
 		public event EventHandler<byte[]> BinaryMessageReceived;

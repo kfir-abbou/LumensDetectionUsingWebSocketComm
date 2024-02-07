@@ -52,12 +52,13 @@ namespace LumenDetection.Tests.ViewModels
 				{
 					// var frames = _vfr.GetVideoFileBytes(@"C:\Temp\Video\ct.avi");
 					var frames = _vfr.GetVideoFrames(@"C:\Temp\Video\ct.avi");
+					// var frames = _vfr.GetVideoFrames(@"C:\Temp\Video\video.mp4");
 					foreach (var frame in frames)
 					{
 						var frameBytes = _vfr.ConvertFrameToBytes(frame);
 						// TODO: handle thread switch:
 						await _lumenOnVideoStreamHandler.HandleVideoFrame((uint)frame.Width, (uint)frame.Height, frameBytes);
-
+						
 						Application.Current.Dispatcher.InvokeAsync(() =>
 						{
 							var bitmapSource = DrawLumensHelper.ConvertVideoFrameByteArrayToBitmapSource(frameBytes);
