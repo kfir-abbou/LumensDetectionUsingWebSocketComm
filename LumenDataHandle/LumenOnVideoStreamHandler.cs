@@ -18,6 +18,7 @@ namespace LumenDetection.Tests.LumenDataHandle
 		private readonly int MAX_DELAY = 10;
 
 		public event EventHandler<IEnumerable<LumensCoordinates>> LumensMessageReceived;
+		public event Action InitResponseReceived;
 
 		public LumenOnVideoStreamHandler(CommInfra commInfra)
 		{
@@ -65,7 +66,17 @@ namespace LumenDetection.Tests.LumenDataHandle
 			var msgData = new UpdateNewImageRequestMessageData(ts, ts.ToString(), width, height, frame);
 			var updateImgReq = new UpdateNewImageMessage(msgData);
 			var req = new WebSocketMessageRequest<UpdateNewImageMessage>(updateImgReq.MessageHeader, updateImgReq);
-			_commInfra.SendUpdateImageMessage(req);
+			_commInfra.SendTMessage(req);
+		}
+
+		public void SendInitAlgoRequest()
+		{
+			var initMsgData = new InitLumenDetectionMessageData(string.Empty, string.Empty, string.Empty, string.Empty);
+			var initRequest = new InitLumenDetectionRequestMessage(initMsgData);
+			var req = new WebSocketMessageRequest<InitLumenDetectionRequestMessage>(initRequest.MessageHeader,
+				initRequest);
+
+			_commInfra.SendTMessage(req);
 		}
 
 

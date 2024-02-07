@@ -71,7 +71,7 @@ namespace LumenDetection.Tests.LumenDataHandle
 			var msgData = new UpdateNewImageRequestMessageData(ts, ts.ToString(), width, height, frame);
 			var updateImgReq = new UpdateNewImageMessage(msgData);
 			var req = new WebSocketMessageRequest<UpdateNewImageMessage>(updateImgReq.MessageHeader, updateImgReq);
-			_commInfra.SendUpdateImageMessage(req);
+			_commInfra.SendTMessage(req);
 		}
 	}
 

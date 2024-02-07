@@ -45,8 +45,10 @@ namespace Server2
 				_webSocketServer.TextMessageReceived += _webSocketServer_TextMessageReceived;
 				_webSocketServer.BinaryMessageReceived += _webSocketServer_BinaryMessageReceived;
 				_webSocketServer.SocketClosed += _webSocketServer_SocketClosed;
+				
 				await _webSocketServer.StartServer("localhost", "example2", 8075);
-				await Task.Run(handleMessageOnQueue);
+				var cancellationToken = new CancellationToken();
+				await Task.Run(handleMessageOnQueue, cancellationToken);
 
 
 			}
@@ -94,35 +96,56 @@ namespace Server2
 						var dequeued = _messagesQueue.TryDequeue(out byte[] bytes);
 						if (dequeued)
 						{
-							var message = WebSocketMessageRequest<UpdateNewImageMessage>.FromJson(bytes);
+
 							// _sw.Stop();
 							// var deserializeJson = _sw.Elapsed.TotalMilliseconds;
 							// _sw.Restart();
 							//
-							var frame = _videoFrameReader.ConvertFrameFromBytes(message.messageData.MessageData.ImageData);
+							var header = WebSocketMessageRequest.GetMessageHeader(bytes);
 
-							if (frame != null)
+							switch (header)
 							{
-								// TODO: add lumen's data and send response
-								var lumenData = simulateAlgoAndGetLumens();
+								case "InitLumenDetectionRequest":
+									{
+										var jsonResponse = new WebSocketMessageResponse<InitLumenDetectionResponseMessage>("OK").ToJSON();
+										var data = Encoding.UTF8.GetBytes(jsonResponse);
+										_webSocketServer.SendBinary(data, _clientSocketID);
+										break;
+									}
+								case "UpdateNewImage":
+									{
+										var message = WebSocketMessageRequest<UpdateNewImageMessage>.FromJson(bytes);
 
-								initMessageData(DateTime.Now.Ticks.ToString(), message.messageData.MessageData.ImageId, lumenData);
-								var response = initResponse(_updateNewImageResponseMessageData);
-							
-								// _sw.Stop();
-								// var t = _sw.Elapsed;
-								// _sw.Restart();
-								
-								var jsonResponse =
-									new WebSocketMessageResponse<UpdateNewImageResponseMessage>(response.MessageHeader,
-										status: "OK", response).ToJSON();
-								var data = Encoding.UTF8.GetBytes(jsonResponse);
+										var frame = _videoFrameReader.ConvertFrameFromBytes(message.messageData.MessageData.ImageData);
 
-								_webSocketServer.SendBinary(data, _clientSocketID);
+										if (frame != null)
+										{
+											// TODO: add lumen's data and send response
+											var lumenData = simulateAlgoAndGetLumens();
+
+											initMessageData(DateTime.Now.Ticks.ToString(), message.messageData.MessageData.ImageId, lumenData);
+											var response = initResponse(_updateNewImageResponseMessageData);
+
+											// _sw.Stop();
+											// var t = _sw.Elapsed;
+											// _sw.Restart();
+
+											var jsonResponse =
+												new WebSocketMessageResponse<UpdateNewImageResponseMessage>(response.MessageHeader,
+													status: "OK", response).ToJSON();
+											var data = Encoding.UTF8.GetBytes(jsonResponse);
+
+											_webSocketServer.SendBinary(data, _clientSocketID);
+										}
+
+										_sw.Stop();
+										var total = _sw.Elapsed.TotalMilliseconds;
+										break;
+									}
+
 							}
-							
-							_sw.Stop();
-							var total = _sw.Elapsed.TotalMilliseconds;
+
+
 						}
 					}
 					catch (Exception e)

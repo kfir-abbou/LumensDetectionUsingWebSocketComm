@@ -22,12 +22,11 @@ namespace LumenDetection.Tests.ViewModels
 
 		private readonly VideoFrameReader _vfr;
 		private readonly LumenInMemoryHandler _lumenDataHandler;
-
 		private BitmapSource _currentFrame;
-	 
 		private string _playVideoText;
 
 		public ObservableCollection<Circle> Circles { get; set; }
+
 		public BitmapSource CurrentFrame
 		{
 			get => _currentFrame;
@@ -46,7 +45,6 @@ namespace LumenDetection.Tests.ViewModels
 				OnPropertyChanged();
 			}
 		}
-
 
 		public LumensInMemoryHandlingViewModel()
 		{

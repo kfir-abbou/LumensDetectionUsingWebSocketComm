@@ -36,13 +36,18 @@ namespace LumenDetection.Tests.ViewModels
 			}
 		}
 
-		public LumenOnVideoViewModel()
+		public LumenOnVideoViewModel( )
 		{
 			_vfr = new VideoFrameReader();
 			Application.Current.Activated += onActivated;
-
+			
 			_lumenOnVideoStreamHandler = new LumenOnVideoStreamHandler(new CommInfra("localhost", "example2", 8075));
 			_lumenOnVideoStreamHandler.LumensMessageReceived += LumenOnVideoStreamHandlerOnLumensMessageReceived;
+		}
+
+		private void MvmOnStartEvent(object sender, EventArgs e)
+		{
+			
 		}
 
 		private Stopwatch _sw = new Stopwatch();

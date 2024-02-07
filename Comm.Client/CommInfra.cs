@@ -81,13 +81,15 @@ namespace LumenDetection.Tests.Comm.Client
 		// 	return id;
 		// }
 
-		public void SendUpdateImageMessage<T>(WebSocketMessageRequest<T> msg)
+		public void SendTMessage<T>(WebSocketMessageRequest<T> msg)
 		{
 			var msgJson = msg.ToJSON();
 			var msgBuffer = Encoding.UTF8.GetBytes(msgJson);
 
 			_ = _websocketClient.SendBinary(msgBuffer);
 		}
+
+
 
 		// private byte[] createBinaryFrameMessage(string id, byte[] frame)
 		// {
