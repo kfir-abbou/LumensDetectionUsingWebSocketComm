@@ -160,6 +160,9 @@
     <PackageReference Include="OpenCvSharp4">
       <Version>4.9.0.20240103</Version>
     </PackageReference>
+    <PackageReference Include="System.Text.Json">
+      <Version>8.0.1</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
