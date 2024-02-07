@@ -87,7 +87,7 @@
     <Compile Include="CommonHelper\DrawLumensHelper.cs" />
     <Compile Include="LumenDataHandle\LumenInMemoryHandler.cs" />
     <Compile Include="LumenDataHandle\LumenOnVideoStreamHandler.cs" />
-    <Compile Include="Model\Circle.cs" />
+    <Compile Include="LumenDataHandle\Model\Circle.cs" />
     <Compile Include="ViewModels\LumenOnVideoViewModel.cs" />
     <Compile Include="ViewModels\LumensInMemoryHandlingViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

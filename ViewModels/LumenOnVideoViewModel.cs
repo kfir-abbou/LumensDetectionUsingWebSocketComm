@@ -50,14 +50,17 @@ namespace LumenDetection.Tests.ViewModels
 			{
 				try
 				{
-					var frames = _vfr.GetVideoFileBytes(@"C:\Temp\Video\ct.avi");
+					// var frames = _vfr.GetVideoFileBytes(@"C:\Temp\Video\ct.avi");
+					var frames = _vfr.GetVideoFrames(@"C:\Temp\Video\ct.avi");
 					foreach (var frame in frames)
 					{
+						var frameBytes = _vfr.ConvertFrameToBytes(frame);
 						// TODO: handle thread switch:
-						await _lumenOnVideoStreamHandler.HandleVideoFrame(frame);
+						await _lumenOnVideoStreamHandler.HandleVideoFrame((uint)frame.Width, (uint)frame.Height, frameBytes);
+
 						Application.Current.Dispatcher.InvokeAsync(() =>
 						{
-							var bitmapSource = DrawLumensHelper.ConvertVideoFrameByteArrayToBitmapSource(frame);
+							var bitmapSource = DrawLumensHelper.ConvertVideoFrameByteArrayToBitmapSource(frameBytes);
 							CurrentFrame = bitmapSource;
 						});
 
@@ -72,17 +75,16 @@ namespace LumenDetection.Tests.ViewModels
 			});
 		}
 
-		private void LumenOnVideoStreamHandlerOnLumensMessageReceived(object sender, LumenDataMessage response)
+		private void LumenOnVideoStreamHandlerOnLumensMessageReceived(object sender, IEnumerable<LumensCoordinates> lumensCoordinates)
 		{
 			try
 			{
 				Application.Current.Dispatcher.InvokeAsync(() =>
 				{
-					var lumens = DrawLumensHelper.ConvertDataToFitScreen(response.Lumens);
+					var lumens = DrawLumensHelper.ConvertDataToFitScreen(lumensCoordinates);
 					Circles.Clear();
 					addCircles(lumens);
 				});
-
 			}
 			catch (Exception e)
 			{

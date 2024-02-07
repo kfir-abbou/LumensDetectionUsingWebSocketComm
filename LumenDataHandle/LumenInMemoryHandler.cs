@@ -15,11 +15,8 @@ namespace LumenDetection.Tests.LumenDataHandle
 {
 	public class LumenInMemoryHandler
 	{
-		// private readonly Queue<FrameMessage> _framesHandled = new();
-		// private object _locker = new();
 		private readonly CommInfra _commInfra;
 		private readonly IDictionary<string, UpdateNewImageRequestMessageData> _framesHandled = new ConcurrentDictionary<string, UpdateNewImageRequestMessageData>();
-		// private object _locker;
 
 		public event EventHandler<UpdateImageResponseReceivedEventArgs> LumensMessageReceived;
 
@@ -27,8 +24,6 @@ namespace LumenDetection.Tests.LumenDataHandle
 		{
 			_commInfra = commInfra;
 			_commInfra.UpdateImageResponse += onUpdateImageResponse;
-			// _commInfra.BinaryMessageReceived += onBinaryMessageReceived;
-			// _commInfra.ClientSocketClosed += onClientSocketClosed;
 		}
 
 		private void onUpdateImageResponse(object sender, UpdateNewImageResponseMessage response)	
@@ -48,33 +43,7 @@ namespace LumenDetection.Tests.LumenDataHandle
 		{
 
 		}
-
-		// private void onBinaryMessageReceived(object sender, byte[] responseMessageFromAlgo)
-		// {
-		// 	try
-		// 	{
-		// 		var response =
-		// 			WebSocketMessageResponse<UpdateNewImageResponseMessage>.FromJson(responseMessageFromAlgo);
-		//
-		// 		if (_framesHandled.TryGetValue(response.messageData.MessageData.ImageId, out var updateImgRequest))
-		// 		{
-		// 			if (updateImgRequest.ImageId == response.messageData.MessageData.ImageId)
-		// 			{
-		// 				LumensMessageReceived?.Invoke(null, new UpdateImageResponseReceivedEventArgs(response.messageData.MessageData, updateImgRequest.ImageData));
-		//
-		// 				_framesHandled.Remove(response.messageData.MessageData.ImageId);
-		//
-		//
-		// 			}
-		// 		}
-		// 	}
-		// 	catch (Exception e)
-		// 	{
-		// 		Console.WriteLine(e);
-		// 		throw;
-		// 	}
-		// }
-
+ 
 		public Task HandleVideoFrame(uint width, uint height, byte[] frame)
 		{
 			try
@@ -82,7 +51,7 @@ namespace LumenDetection.Tests.LumenDataHandle
 				var ts = DateTime.Now.Ticks;
 				var id = ts.ToString();
 
-				sendRequest(id, width, height, frame);
+				sendUpdateImageRequest(id, width, height, frame);
 
 				var frameAsString = Convert.ToBase64String(frame);
 
@@ -101,24 +70,24 @@ namespace LumenDetection.Tests.LumenDataHandle
 			return Task.CompletedTask;
 		}
 
-		public byte[] TryGetFrame(string id)
-		{
+		// public byte[] TryGetFrame(string id)
+		// {
+		//
+		// 	var frameExists = _framesHandled.TryGetValue(id, out var frameMsg);
+		// 	if (frameExists)
+		// 	{
+		//
+		// 		return frameMsg.ImageData;
+		// 	}
+		//
+		// 	return null;
+		// }
 
-			var frameExists = _framesHandled.TryGetValue(id, out var frameMsg);
-			if (frameExists)
-			{
-
-				return frameMsg.ImageData;
-			}
-
-			return null;
-		}
-
-		private void sendFrameMessage(string id, uint width, uint height, byte[] frame)
-		{
-			_commInfra.SendUpdateImageMessage(id, width, height, frame);
-		}
-		private void sendRequest(string id, uint width, uint height, byte[] frame)
+		// private void sendFrameMessage(string id, uint width, uint height, byte[] frame)
+		// {
+		// 	_commInfra.SendUpdateImageMessage(id, width, height, frame);
+		// }
+		private void sendUpdateImageRequest(string id, uint width, uint height, byte[] frame)
 		{
 			var ts = DateTime.Now.Ticks;
 

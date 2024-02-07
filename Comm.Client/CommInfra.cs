@@ -40,10 +40,13 @@ namespace LumenDetection.Tests.Comm.Client
 							UpdateImageResponse?.Invoke(null, msg.messageData);
 							break;
 						}
+						case "":
+						{
+							break;
+						}
 					}
 				}
-
-				await Task.Delay(3);
+				await Task.Delay(1);
 			}
 		}
 
@@ -54,47 +57,47 @@ namespace LumenDetection.Tests.Comm.Client
 			_messageQueue.Enqueue(msgBytes);
 		}
 
-		public string SendFrameMessage(string id, byte[] frame)
-		{
-			var data = createBinaryFrameMessage(id, frame);
+		// public string SendFrameMessage(string id, byte[] frame)
+		// {
+		// 	var data = createBinaryFrameMessage(id, frame);
+		//
+		// 	_websocketClient.SendBinary(data);
+		//
+		// 	return id;
+		// }
 
-			_websocketClient.SendBinary(data);
-
-			return id;
-		}
-
-		public string SendUpdateImageMessage(string id, uint width, uint height, byte[] frame)
-		{
-			var ts = DateTime.Now.Ticks;
-
-			var msgData = new UpdateNewImageRequestMessageData(ts, id, width, height, frame);
-			var updateImageRequest = new UpdateNewImageMessage(msgData);
-
-			var msgJson = JsonConvert.SerializeObject(updateImageRequest);
-			var msgBuffer = Encoding.UTF8.GetBytes(msgJson);
-
-			_websocketClient.SendBinary(msgBuffer);
-
-			return id;
-		}
+		// public string SendUpdateImageMessage(string id, uint width, uint height, byte[] frame)
+		// {
+		// 	var ts = DateTime.Now.Ticks;
+		//
+		// 	var msgData = new UpdateNewImageRequestMessageData(ts, id, width, height, frame);
+		// 	var updateImageRequest = new UpdateNewImageMessage(msgData);
+		//
+		// 	var msgJson = JsonConvert.SerializeObject(updateImageRequest);
+		// 	var msgBuffer = Encoding.UTF8.GetBytes(msgJson);
+		//
+		// 	_websocketClient.SendBinary(msgBuffer);
+		//
+		// 	return id;
+		// }
 
 		public void SendUpdateImageMessage<T>(WebSocketMessageRequest<T> msg)
 		{
-			var msgJson = msg.ToJSON(); // JsonConvert.SerializeObject(msg);
+			var msgJson = msg.ToJSON();
 			var msgBuffer = Encoding.UTF8.GetBytes(msgJson);
 
 			_ = _websocketClient.SendBinary(msgBuffer);
 		}
 
-		private byte[] createBinaryFrameMessage(string id, byte[] frame)
-		{
-			string frameBase64 = Convert.ToBase64String(frame);
-			var msg = new FrameMessage(id, frameBase64);
-			var jsonMessage = JsonConvert.SerializeObject(msg);
-
-			var bytes = Encoding.UTF8.GetBytes(jsonMessage);
-
-			return bytes;
-		}
+		// private byte[] createBinaryFrameMessage(string id, byte[] frame)
+		// {
+		// 	string frameBase64 = Convert.ToBase64String(frame);
+		// 	var msg = new FrameMessage(id, frameBase64);
+		// 	var jsonMessage = JsonConvert.SerializeObject(msg);
+		//
+		// 	var bytes = Encoding.UTF8.GetBytes(jsonMessage);
+		//
+		// 	return bytes;
+		// }
 	}
 }

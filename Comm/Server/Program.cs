@@ -66,13 +66,8 @@ namespace Server
 		}
 		private void _webSocketServer_BinaryMessageReceived(byte[] buffer, int socketID)
 		{
-			// Console.WriteLine($"WebSocket BinaryMessageReceived{socketID} closed");
 			try
 			{
-				// var jsonText = Encoding.UTF8.GetString(buffer);
-				// var message = JsonConvert.DeserializeObject<FrameMessage>(jsonText);
-
-				// var frameAsBytes = Convert.FromBase64String(message.FrameAsString);
 				var message = WebSocketMessageRequest<UpdateNewImageMessage>.FromJson(buffer);
 				var frame = _videoFrameReader.ConvertFrameFromBytes(message.messageData.MessageData.ImageData);
 
