@@ -15,6 +15,7 @@ namespace LumenDetection.Tests.LumenDataHandle
 		private readonly IDictionary<string, UpdateNewImageRequestMessageData> _framesHandled = new ConcurrentDictionary<string, UpdateNewImageRequestMessageData>();
 
 		public event EventHandler<UpdateImageResponseReceivedEventArgs> LumensMessageReceived;
+		public event Action InitAlgoResponseReceived;
 
 		public LumenInMemoryHandler(CommInfra commInfra)
 		{
@@ -24,9 +25,12 @@ namespace LumenDetection.Tests.LumenDataHandle
 
 		}
 
-		private void onInitAlgoResponse(object sender, string e)
+		private void onInitAlgoResponse(object sender, string status)
 		{
-			
+			if (status.ToLower() == "ok")
+			{
+				InitAlgoResponseReceived?.Invoke();
+			}
 		}
 
 		private void onUpdateImageResponse(object sender, UpdateNewImageResponseMessage response)	
@@ -80,6 +84,17 @@ namespace LumenDetection.Tests.LumenDataHandle
 			var req = new WebSocketMessageRequest<UpdateNewImageMessage>(updateImgReq.MessageHeader, updateImgReq);
 			_commInfra.SendTMessage(req);
 		}
+
+		public void SendInitAlgoRequest()
+		{
+			var initMsgData = new InitLumenDetectionMessageData("string.Empty", "string.Empty", "string.Empty", "string.Empty");
+			var initRequest = new InitLumenDetectionRequestMessage(initMsgData);
+			var req = new WebSocketMessageRequest<InitLumenDetectionRequestMessage>(initRequest.MessageHeader,
+				initRequest);
+
+			_commInfra.SendTMessage(req);
+		}
+
 	}
 
 

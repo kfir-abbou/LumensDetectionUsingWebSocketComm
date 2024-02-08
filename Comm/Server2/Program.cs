@@ -1,6 +1,5 @@
 ﻿using AForge.Video.Reader;
 using Comm.Model;
-using Newtonsoft.Json;
 using SD.Framework.Infrastructure.IPCCommunication;
 using System;
 using System.Collections.Generic;
@@ -146,10 +145,7 @@ namespace Server2
 										var total = _sw.Elapsed.TotalMilliseconds;
 										break;
 									}
-
 							}
-
-
 						}
 					}
 					catch (Exception e)

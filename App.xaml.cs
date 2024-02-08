@@ -17,21 +17,20 @@ namespace LumenDetection.Tests
 		// 	app.InitializeComponent();
 		// 	app.Run();
 		// }
-		protected override void OnStartup(StartupEventArgs e)
-		{
-			base.OnStartup(e);
-
-			var serviceProvider = new ServiceCollection()
-				.AddSingleton<CommonService>()
-				.AddSingleton<MainViewModel>()
-				.AddSingleton<LumenOnVideoViewModel>()
-				.BuildServiceProvider();
-
-			var mainWindow = new MainWindow();
-			mainWindow.Show();
-		}
-
-
+		// protected override void OnStartup(StartupEventArgs e)
+		// {
+		// 	base.OnStartup(e);
+		//
+		// 	var serviceProvider = new ServiceCollection()
+		// 		.AddSingleton<MainViewModel>()
+		// 		.AddSingleton<LumenOnVideoViewModel>()
+		// 		.BuildServiceProvider();
+		//
+		// 	var mainWindow = new MainWindow();
+		// 	mainWindow.Show();
+		// }
+		//
+		//
 
 		// public App()
 		// {

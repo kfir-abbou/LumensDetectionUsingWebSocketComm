@@ -24,9 +24,7 @@ namespace LumenDetection.Tests.ViewModels
 		private readonly LumenOnVideoStreamHandler _lumenOnVideoStreamHandler;
 		private readonly VideoFrameReader _vfr;
 		private BitmapSource _currentFrame;
-		private CommonService _commonService;
-
-
+		
 		public ObservableCollection<Circle> Circles { get; set; } = new();
 		public BitmapSource CurrentFrame
 		{

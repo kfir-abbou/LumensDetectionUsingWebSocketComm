@@ -52,20 +52,26 @@ namespace LumenDetection.Tests.ViewModels
 			Circles = new ObservableCollection<Circle>();
 			_vfr = new VideoFrameReader();
 			Application.Current.Activated += onActivated;
-			WeakReferenceMessenger.Default.Register<StartHandlingVideoMessage>(this, startStreamingVideo);
+			WeakReferenceMessenger.Default.Register<StartHandlingVideoMessage>(this, sendInitMessageToAlgo);
 
 			_lumenDataHandler = new LumenInMemoryHandler(new CommInfra("localhost", "example", 8074));
 			_lumenDataHandler.LumensMessageReceived += onLumensMessageReceived;
+			_lumenDataHandler.InitAlgoResponseReceived += onInitAlgoResponseReceived;
+		}
+
+		private void onInitAlgoResponseReceived()
+		{
+			startStreamingVideo();
 		}
 
 		private void sendInitMessageToAlgo(object recipient, StartHandlingVideoMessage message)
 		{
 			if (message.Start)
 			{
-				
+				_lumenDataHandler.SendInitAlgoRequest();
 			}
 		}
-		private void startStreamingVideo(object recipient, StartHandlingVideoMessage message)
+		private void startStreamingVideo()
 		{
 			Task.Run(async () =>
 			{
