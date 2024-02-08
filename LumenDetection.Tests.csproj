@@ -37,6 +37,9 @@
     <WarningLevel>4</WarningLevel>
     <LangVersion>default</LangVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>LumenDetection.Tests.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="SD.Framework, Version=8.300.11111.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -64,6 +67,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommonHelper\CommonService.cs" />
+    <Compile Include="LumenDataHandle\StartHandlingVideoMessage.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Views\PlayNaturalVideoView.xaml.cs">
       <DependentUpon>PlayNaturalVideoView.xaml</DependentUpon>
     </Compile>

@@ -13,16 +13,18 @@ using System.Windows;
 using AForge.Video.Reader;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace LumenDetection.Tests.ViewModels
 {
 	public class LumenOnVideoViewModel : INotifyPropertyChanged
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
-		
+
 		private readonly LumenOnVideoStreamHandler _lumenOnVideoStreamHandler;
 		private readonly VideoFrameReader _vfr;
 		private BitmapSource _currentFrame;
+		private CommonService _commonService;
 
 
 		public ObservableCollection<Circle> Circles { get; set; } = new();
@@ -36,22 +38,18 @@ namespace LumenDetection.Tests.ViewModels
 			}
 		}
 
-		public LumenOnVideoViewModel( )
+
+		private IMessenger _messenger;
+		public LumenOnVideoViewModel()
 		{
+			WeakReferenceMessenger.Default.Register<StartHandlingVideoMessage>(this, startStreamingVideo);
 			_vfr = new VideoFrameReader();
-			Application.Current.Activated += onActivated;
-			
+			 
 			_lumenOnVideoStreamHandler = new LumenOnVideoStreamHandler(new CommInfra("localhost", "example2", 8075));
 			_lumenOnVideoStreamHandler.LumensMessageReceived += LumenOnVideoStreamHandlerOnLumensMessageReceived;
 		}
 
-		private void MvmOnStartEvent(object sender, EventArgs e)
-		{
-			
-		}
-
-		private Stopwatch _sw = new Stopwatch();
-		private void onActivated(object sender, EventArgs e)
+		private void startStreamingVideo(object recipient, StartHandlingVideoMessage message)
 		{
 			Task.Run(async () =>
 			{
@@ -62,7 +60,7 @@ namespace LumenDetection.Tests.ViewModels
 					foreach (var frame in frames)
 					{
 						var frameBytes = _vfr.ConvertFrameToBytes(frame);
-						
+
 						await _lumenOnVideoStreamHandler.HandleVideoFrame((uint)frame.Width, (uint)frame.Height, frameBytes);
 
 						_sw.Restart();
@@ -84,6 +82,9 @@ namespace LumenDetection.Tests.ViewModels
 			});
 		}
 
+
+		private Stopwatch _sw = new Stopwatch();
+		 
 		private void LumenOnVideoStreamHandlerOnLumensMessageReceived(object sender, IEnumerable<LumensCoordinates> lumensCoordinates)
 		{
 			try
@@ -109,7 +110,7 @@ namespace LumenDetection.Tests.ViewModels
 				addCircle(lumenData.X, lumenData.Y, lumenData.Radius);
 			}
 		}
-		
+
 		private void addCircle(double x, double y, double radius)
 		{
 			Application.Current.Dispatcher.Invoke(() => // Ensure UI updates on the UI thread

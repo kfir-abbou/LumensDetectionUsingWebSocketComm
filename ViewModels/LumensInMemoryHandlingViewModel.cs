@@ -13,6 +13,7 @@ using LumenDetection.Tests.CommonHelper;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace LumenDetection.Tests.ViewModels
 {
@@ -51,11 +52,28 @@ namespace LumenDetection.Tests.ViewModels
 			Circles = new ObservableCollection<Circle>();
 			_vfr = new VideoFrameReader();
 			Application.Current.Activated += onActivated;
+			WeakReferenceMessenger.Default.Register<StartHandlingVideoMessage>(this, startStreamingVideo);
 
 			_lumenDataHandler = new LumenInMemoryHandler(new CommInfra("localhost", "example", 8074));
 			_lumenDataHandler.LumensMessageReceived += onLumensMessageReceived;
 		}
-		 
+
+		private void startStreamingVideo(object recipient, StartHandlingVideoMessage message)
+		{
+			Task.Run(async () =>
+			{
+				try
+				{
+					await startHandlingVideo();
+				}
+				catch (Exception exception)
+				{
+					Console.WriteLine(exception);
+					throw;
+				}
+			});
+		}
+
 		private readonly Stopwatch _stopwatch = new Stopwatch();
 
 		private void onLumensMessageReceived(object sender, UpdateImageResponseReceivedEventArgs eventArgs)
@@ -99,18 +117,7 @@ namespace LumenDetection.Tests.ViewModels
 		{
 			Application.Current.Dispatcher.Invoke(() => PlayVideoText = "In Memory handler:");
 
-			Task.Run(async () =>
-			{
-				try
-				{
-					await startHandlingVideo();
-				}
-				catch (Exception exception)
-				{
-					Console.WriteLine(exception);
-					throw;
-				}
-			});
+			
 		}
 
 		private async Task startHandlingVideo()

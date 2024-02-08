@@ -7,33 +7,33 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using AForge.Video.Reader;
+using CommunityToolkit.Mvvm.Messaging;
 using LumenDetection.Tests.CommonHelper;
 using LumenDetection.Tests.LumenDataHandle;
-using LumenDetection.Tests.Model;
 using SD.Framework.Infrastructure.Commands;
-using SD.Framework.Infrastructure.Scs.Communication.Messengers;
 
 namespace LumenDetection.Tests.ViewModels
 {
 	public class MainViewModel : INotifyPropertyChanged
 	{
-		private readonly IMessenger _messenger;
 		private readonly CommonService _commonService;
-		public event EventHandler StartEvent; 
 		public event PropertyChangedEventHandler PropertyChanged;
-
+		private IMessenger _messenger;
 		public ICommand StartCommand => new RelayCommand(onStart);
+
+		
+		public MainViewModel()
+		{
+			// _commonService = commonService;
+
+		}
 
 		private void onStart(object obj)
 		{
-			 // _commonService.FireEvent();
+			WeakReferenceMessenger.Default.Send(new StartHandlingVideoMessage());
+
+			// _commonService.FireEvent();
 		}
-
-		// public MainViewModel(CommonService commonService)
-		// {
-		// 	_commonService = commonService;
-		// }
-
 
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
