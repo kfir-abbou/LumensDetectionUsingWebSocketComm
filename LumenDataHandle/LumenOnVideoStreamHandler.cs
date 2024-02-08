@@ -41,22 +41,18 @@ namespace LumenDetection.Tests.LumenDataHandle
 			var id = response.MessageData.ImageId;
 			var deltaInMilli = calculateTimeDiffFromId(id);
 
-			if ( lumensCoords.Any()) //deltaInMilli < 1150 &&
+			if (lumensCoords.Any()) //deltaInMilli < 1150 &&
 			{
 				LumensMessageReceived?.Invoke(null, lumensCoords);
 			}
-			_sw.Stop();
-			var t = _sw.Elapsed.TotalMilliseconds;
-			Console.WriteLine($"Invoke: {t}");
+
 		}
 
-		private Stopwatch _sw  = new Stopwatch();
 
 		public Task HandleVideoFrame(uint width, uint height, byte[] frame)
 		{
 			try
 			{
-				_sw.Restart();
 				sendUpdateImageRequest(width, height, frame);
 			}
 			catch (Exception e)
@@ -68,13 +64,13 @@ namespace LumenDetection.Tests.LumenDataHandle
 			return Task.CompletedTask;
 		}
 
-		 
+
 		private void sendUpdateImageRequest(uint width, uint height, byte[] frame)
 		{
 			var ts = DateTime.Now.Ticks;
-			var msgData = new UpdateNewImageRequestMessageData(ts, ts.ToString(), width, height, frame);
-			var updateImgReq = new UpdateNewImageMessage(msgData);
-			var req = new WebSocketMessageRequest<UpdateNewImageMessage>(updateImgReq.MessageHeader, updateImgReq);
+			var msgData = new UpdateNewImageRequestMessageDataBytes(ts, ts.ToString(), width, height, frame);
+			var updateImgReq = new UpdateNewImageMessageBytes(msgData);
+			var req = new WebSocketMessageRequest<UpdateNewImageMessageBytes>(updateImgReq.MessageHeader, updateImgReq);
 			_commInfra.SendTMessage(req);
 		}
 
@@ -93,7 +89,7 @@ namespace LumenDetection.Tests.LumenDataHandle
 		{
 			var nowTicks = DateTime.Now.Ticks;
 			var ticks = Convert.ToDouble(responseId);
- 
+
 
 			var delta = (int)((nowTicks - ticks) / TICKS_IN_MILI);
 			return delta;

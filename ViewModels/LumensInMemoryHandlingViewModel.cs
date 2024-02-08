@@ -91,20 +91,26 @@ namespace LumenDetection.Tests.ViewModels
 
 		private void onLumensMessageReceived(object sender, UpdateImageResponseReceivedEventArgs eventArgs)
 		{
+			_stopwatch.Reset();
+			_stopwatch.Start();
 			try
 			{
-				_stopwatch.Restart();
 				Application.Current.Dispatcher.InvokeAsync(() => // Ensure UI updates on the UI thread
 				{
-					var bitmapImage = DrawLumensHelper.ConvertVideoFrameByteArrayToBitmapSource(eventArgs.FrameBytes);
+					// var bitmapImage = DrawLumensHelper.ConvertVideoFrameByteArrayToBitmapSource(eventArgs.FrameBytes);
+					var bitmapImage = DrawLumensHelper.ConvertVideoFrameStringToBitmapSource(eventArgs.FrameStr);
 					var lumens = DrawLumensHelper.ConvertDataToFitScreen(eventArgs.Response.LumensCoordinates);
 
 					CurrentFrame = bitmapImage;
 					Circles.Clear();
 					addCircles(lumens);
 				});
+				_sw.Stop();
 				_stopwatch.Stop();
-				// var total = _stopwatch.Elapsed.TotalMilliseconds;
+				// var t1 = _sw.Elapsed.TotalMilliseconds;
+				// Console.WriteLine($"In Memory -> {t1} ms");
+				var t2 = _stopwatch.Elapsed.TotalMilliseconds;
+				
 			}
 			catch (Exception e)
 			{
@@ -133,21 +139,18 @@ namespace LumenDetection.Tests.ViewModels
 			
 		}
 
+		private Stopwatch _sw = new Stopwatch();
 		private async Task startHandlingVideo()
 		{
 
 			await Task.Run(async () =>
 			{
-				// TODO:
-				// 1. convert to json containing-> id, frame -> convert to byte[] - done
-				// 2. On receiving end deserialize into frame and id - done
-				// 3. on receiving end generate lumens data - done 
-				// 4. on receiving end return data with frame id 
-				// 5. once lumen's data return add to queue 
-				// 6. play according to frame order
 				var frames = _vfr.GetVideoFrames(@"C:\Temp\Video\ct.avi");
 				foreach (var frame in frames)
 				{
+					_sw.Reset();
+					_sw.Restart();
+
 					var frameAsBytes = _vfr.ConvertFrameToBytes(frame);
 					await _lumenDataHandler.HandleVideoFrame((uint)frame.Width, (uint)frame.Height, frameAsBytes);
 					await Task.Delay(33);

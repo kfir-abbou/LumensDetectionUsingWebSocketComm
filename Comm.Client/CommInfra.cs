@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -83,16 +84,29 @@ namespace LumenDetection.Tests.Comm.Client
 		//
 		// 	return id;
 		// }
-
+		private Stopwatch sw = new Stopwatch();
 		public void SendTMessage<T>(WebSocketMessageRequest<T> msg)
 		{
+			sw.Restart();
+
 			var msgJson = msg.ToJSON();
 			var msgBuffer = Encoding.UTF8.GetBytes(msgJson);
-
 			_ = _websocketClient.SendBinary(msgBuffer);
+
+			sw.Stop();
+			var t1 = sw.Elapsed.TotalMilliseconds;
 		}
 
+		public void SendBytes(byte[] msgBytes)
+		{
+			_websocketClient.SendBinary(msgBytes);
+		}
 
+		private string toJson<T>(WebSocketMessageRequest<T> msg)
+		{
+			var json = JsonConvert.SerializeObject(msg);
+			return json;
+		}
 
 		// private byte[] createBinaryFrameMessage(string id, byte[] frame)
 		// {

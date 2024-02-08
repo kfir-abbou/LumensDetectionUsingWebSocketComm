@@ -67,7 +67,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="LumenDataHandle\StartHandlingVideoMessage.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Views\PlayNaturalVideoView.xaml.cs">
       <DependentUpon>PlayNaturalVideoView.xaml</DependentUpon>
     </Compile>

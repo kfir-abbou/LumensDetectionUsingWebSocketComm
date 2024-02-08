@@ -10,6 +10,8 @@ using System.Threading;
 using Comm.Model.LumenDetectionApi;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 
 namespace Server2
 {
@@ -117,8 +119,18 @@ namespace Server2
 									}
 								case "UpdateNewImage":
 									{
-										var message = WebSocketMessageRequest<UpdateNewImageMessage>.FromJson(bytes);
+										_sw.Reset();
+										_sw.Restart();
+										var json = Encoding.UTF8.GetString(bytes);
+										var message =
+											_serializer
+												.Deserialize<WebSocketMessageRequest<UpdateNewImageMessageBytes>>(json);
+										_sw.Stop();
+										var t11 = _sw.Elapsed.TotalMilliseconds;
+										Console.WriteLine(t11);
+										// var message = WebSocketMessageRequest<UpdateNewImageMessageBytes>.FromJson(bytes);
 
+										// var frame = _videoFrameReader.ConvertFrameFromBytes(message.messageData.MessageData.ImageData);
 										var frame = _videoFrameReader.ConvertFrameFromBytes(message.messageData.MessageData.ImageData);
 
 										if (frame != null)
@@ -158,6 +170,8 @@ namespace Server2
 				await Task.Delay(1);
 			}
 		}
+
+		private JavaScriptSerializer _serializer = new JavaScriptSerializer();
 
 		private UpdateNewImageResponseMessage initResponse(UpdateNewImageResponseMessageData responseData)
 		{

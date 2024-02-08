@@ -29,10 +29,10 @@
             <views:LumensInMemoryHandlingUserControl Grid.Column="0"  Margin="5" Width="660" Height="500" />
         </Border>
         <Border  Grid.Row="1" Grid.Column="1" BorderBrush="White" BorderThickness="1">
-            <views:LumensOnVideoStream Grid.Column="1" Margin="5" Width="660" Height="500"/>
+            <!-- <views:LumensOnVideoStream Grid.Column="1" Margin="5" Width="660" Height="500"/> -->
         </Border>
         <Border  Grid.Row="1" Grid.Column="2" BorderBrush="White" BorderThickness="1">
-            <views:PlayNaturalVideoView Grid.Column="2" Margin="5" Width="660" Height="500"/>
+            <!-- <views:PlayNaturalVideoView Grid.Column="2" Margin="5" Width="660" Height="500"/> -->
         </Border>
     </Grid>
 </Window>

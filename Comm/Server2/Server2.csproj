@@ -18,5 +18,6 @@
 	  <Reference Include="SD.Framework">
 	    <HintPath>..\..\..\..\Integration-EVO-Oct\Binaries\iLogic\SD.Framework.dll</HintPath>
 	  </Reference>
+	  <Reference Include="System.Web.Extensions" />
 	</ItemGroup>
 </Project>

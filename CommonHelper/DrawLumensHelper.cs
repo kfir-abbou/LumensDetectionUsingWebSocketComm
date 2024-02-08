@@ -53,5 +53,26 @@ namespace LumenDetection.Tests.CommonHelper
 			}
 		}
 
+		public static BitmapSource ConvertVideoFrameStringToBitmapSource(string videoFrameStr)
+		{
+
+			var videoFrameBytes = Convert.FromBase64String(videoFrameStr);
+			using (var memoryStream = new MemoryStream(videoFrameBytes))
+			{
+				// Create a Bitmap object from the byte array
+				Bitmap bitmap = new Bitmap(memoryStream);
+
+				// Convert the Bitmap to a BitmapSource using CreateBitmapSourceFromHBitmap
+				IntPtr hBitmap = bitmap.GetHbitmap();
+				BitmapSource bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
+					hBitmap,
+					IntPtr.Zero,
+					Int32Rect.Empty,
+					BitmapSizeOptions.FromEmptyOptions()
+				);
+				return bitmapSource;
+			}
+		}
+
 	}
 }

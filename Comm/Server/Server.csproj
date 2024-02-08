@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Json.Net" Version="1.0.33" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\AForge.Video.Reader\AForge.Video.Reader.csproj" />
     <ProjectReference Include="..\..\Comm.Model\Comm.Model\Comm.Model.csproj" />
     <ProjectReference Include="..\..\Common\Common.csproj" />
@@ -17,6 +21,7 @@
     <Reference Include="SD.Framework">
       <HintPath>..\..\..\..\Integration-EVO-Oct\Binaries\iLogic\SD.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
   </ItemGroup>
 
 </Project>

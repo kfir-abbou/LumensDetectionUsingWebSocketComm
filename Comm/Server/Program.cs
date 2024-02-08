@@ -48,8 +48,6 @@ namespace Server2
 				await _webSocketServer.StartServer("localhost", "example", 8074);
 				var cancellationToken = new CancellationToken();
 				await Task.Run(handleMessageOnQueue, cancellationToken);
-
-
 			}
 			catch (Exception exception)
 			{
@@ -89,17 +87,15 @@ namespace Server2
 				if (_messagesQueue.Any())
 				{
 					_sw.Start();
-
 					try
 					{
 						var dequeued = _messagesQueue.TryDequeue(out byte[] bytes);
 						if (dequeued)
 						{
-
 							// _sw.Stop();
 							// var deserializeJson = _sw.Elapsed.TotalMilliseconds;
 							// _sw.Restart();
-							//
+
 							var header = WebSocketMessageRequest.GetMessageHeader(bytes);
 
 							switch (header)
@@ -117,10 +113,21 @@ namespace Server2
 									}
 								case "UpdateNewImage":
 									{
+										_sw.Reset();
+										_sw.Start();
 										var message = WebSocketMessageRequest<UpdateNewImageMessage>.FromJson(bytes);
+										
+										
+										// _sw.Stop();
+										// var t1 = _sw.Elapsed.TotalMilliseconds;
+										// Console.WriteLine(t1);
+										// _sw.Restart();
+										// var frame = _videoFrameReader.ConvertFrameFromBytes(message.messageData.MessageData.ImageData);
+										var frame = _videoFrameReader.ConvertFrameFromString(message.messageData.MessageData.ImageData);
 
-										var frame = _videoFrameReader.ConvertFrameFromBytes(message.messageData.MessageData.ImageData);
-
+										// _sw.Stop();
+										// var t2 = _sw.Elapsed.TotalMilliseconds;
+										// Console.WriteLine(t2);
 										if (frame != null)
 										{
 											// TODO: add lumen's data and send response
@@ -143,6 +150,7 @@ namespace Server2
 
 										_sw.Stop();
 										var total = _sw.Elapsed.TotalMilliseconds;
+										Console.WriteLine(total);
 										break;
 									}
 							}
@@ -158,6 +166,14 @@ namespace Server2
 				await Task.Delay(1);
 			}
 		}
+
+		// private readonly JavaScriptSerializer _serializer = new JavaScriptSerializer(); // avoid new on each iteration
+		// private readonly JsonSerializerOptions options = new JsonSerializerOptions
+		// {
+		// 	PropertyNameCaseInsensitive = true
+		// };
+
+			
 
 		private UpdateNewImageResponseMessage initResponse(UpdateNewImageResponseMessageData responseData)
 		{

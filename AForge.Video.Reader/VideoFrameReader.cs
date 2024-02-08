@@ -64,7 +64,7 @@ namespace AForge.Video.Reader
 		}
 		public byte[] ConvertFrameToBytes(Bitmap frame)
 		{
-			_sw.Start();
+			_sw.Restart();
 			byte[] frameAsBytes;
 			if (frame != null)
 			{
@@ -87,7 +87,7 @@ namespace AForge.Video.Reader
 				var t = _sw.Elapsed.TotalMilliseconds;
 				return frameAsBytes;
 				// Process frame here (save it, send it over network, etc.)
-				
+
 			}
 
 			return Array.Empty<byte>();
@@ -112,7 +112,7 @@ namespace AForge.Video.Reader
 		public Bitmap ConvertFrameFromBytes(byte[] frameAsBytes)
 		{
 			_sw.Start();
-			
+
 			var width = 640;
 			var height = 480;
 			using (var bitmap = new Bitmap(frameAsBytes.Length, width, height, PixelFormat.Format24bppRgb, IntPtr.Zero))
@@ -127,24 +127,42 @@ namespace AForge.Video.Reader
 				return bitmap;
 			}
 		}
-
-
-		// public Bitmap ConvertFrameFromBytes(byte[] frameAsBytes)
+		// public Bitmap ConvertFrameFromString(string frameAsStr)
 		// {
-		// 	try
+		// 	var width = 640;
+		// 	var height = 480;
+		//
+		// 	var frameAsBytes = Convert.FromBase64String(frameAsStr);
+		// 	using (var bitmap = new Bitmap(frameAsBytes.Length, width, height, PixelFormat.Format24bppRgb, IntPtr.Zero))
 		// 	{
-		// 		using (MemoryStream ms = new MemoryStream(frameAsBytes))
-		// 		{
-		// 			Bitmap bitmap = new Bitmap(ms);
-		// 			return bitmap;
-		// 		}
-		// 	}
-		// 	catch (Exception ex)
-		// 	{
-		// 		Console.WriteLine($"Error converting frame to Bitmap: {ex.Message}");
-		// 		return null; // or throw an exception based on your application's requirements
+		// 		BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, bitmap.PixelFormat);
+		// 		Marshal.Copy(frameAsBytes, 0, bmpData.Scan0, frameAsBytes.Length);
+		// 		bitmap.UnlockBits(bmpData);
+		//
+		// 		//process bitmap
+		// 	 
+		// 		return bitmap;
 		// 	}
 		// }
+
+		public Bitmap ConvertFrameFromString(string frameAsStr)
+		{
+			var width = 640;
+			var height = 480;
+
+			var frameAsBytes = Convert.FromBase64String(frameAsStr);
+			using (var bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb))
+			{
+				BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, bitmap.PixelFormat);
+				var stride = ((width * 24 + 31) / 32) * 4;
+				Marshal.Copy(frameAsBytes, 0, bmpData.Scan0, frameAsBytes.Length);
+				bitmap.UnlockBits(bmpData);
+
+				// Process bitmap
+
+				return bitmap;
+			}
+		}
 
 		private static ImageCodecInfo GetEncoder(ImageFormat format)
 		{

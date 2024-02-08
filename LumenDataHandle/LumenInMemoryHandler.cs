@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 using System.Threading.Tasks;
 using Comm.Model;
 using Comm.Model.LumenDetectionApi;
@@ -62,7 +64,7 @@ namespace LumenDetection.Tests.LumenDataHandle
 
 				if (!_framesHandled.ContainsKey(id))
 				{
-					_framesHandled.Add(id, new UpdateNewImageRequestMessageData(ts, id, width, height, frame));
+					_framesHandled.Add(id, new UpdateNewImageRequestMessageData(ts, id, width, height, Convert.ToBase64String(frame)));
 				}
 
 			}
@@ -75,14 +77,20 @@ namespace LumenDetection.Tests.LumenDataHandle
 			return Task.CompletedTask;
 		}
  
+		private Stopwatch _stopwatch = new Stopwatch();
 		private void sendUpdateImageRequest(string id, uint width, uint height, byte[] frame)
 		{
 			var ts = DateTime.Now.Ticks;
 
-			var msgData = new UpdateNewImageRequestMessageData(ts, ts.ToString(), width, height, frame);
+			var msgData = new UpdateNewImageRequestMessageData(ts, ts.ToString(), width, height, Convert.ToBase64String(frame));
 			var updateImgReq = new UpdateNewImageMessage(msgData);
-			var req = new WebSocketMessageRequest<UpdateNewImageMessage>(updateImgReq.MessageHeader, updateImgReq);
-			_commInfra.SendTMessage(req);
+			_stopwatch.Restart();
+			var req = new WebSocketMessageRequest<UpdateNewImageMessage>(updateImgReq.MessageHeader, updateImgReq).ToJSON();
+			var bytes = Encoding.UTF8.GetBytes(req);
+			_stopwatch.Stop();
+			var t = _stopwatch.Elapsed.TotalMilliseconds;
+			// _commInfra.SendTMessage(req);
+			_commInfra.SendBytes(bytes);
 		}
 
 		public void SendInitAlgoRequest()

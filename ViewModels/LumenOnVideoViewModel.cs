@@ -70,19 +70,19 @@ namespace LumenDetection.Tests.ViewModels
 					// var frames = _vfr.GetVideoFrames(@"C:\Temp\Video\video.mp4");
 					foreach (var frame in frames)
 					{
+						_swCycle.Restart();
 						var frameBytes = _vfr.ConvertFrameToBytes(frame);
 
 						await _lumenOnVideoStreamHandler.HandleVideoFrame((uint)frame.Width, (uint)frame.Height, frameBytes);
-
-						_sw.Restart();
+						
 						Application.Current.Dispatcher.InvokeAsync(() =>
 						{
 							var bitmapSource = DrawLumensHelper.ConvertVideoFrameByteArrayToBitmapSource(frameBytes);
 							CurrentFrame = bitmapSource;
 						});
-						_sw.Stop();
-						var t = _sw.Elapsed.TotalMilliseconds;
-						await Task.Delay(38);
+						 
+					 
+						await Task.Delay(33);
 					}
 				}
 				catch (Exception exception)
@@ -94,7 +94,8 @@ namespace LumenDetection.Tests.ViewModels
 		}
 
 
-		private Stopwatch _sw = new Stopwatch();
+		private readonly Stopwatch _sw = new();
+		private readonly Stopwatch _swCycle = new();
 		 
 		private void LumenOnVideoStreamHandlerOnLumensMessageReceived(object sender, IEnumerable<LumensCoordinates> lumensCoordinates)
 		{
@@ -106,6 +107,9 @@ namespace LumenDetection.Tests.ViewModels
 					Circles.Clear();
 					addCircles(lumens);
 				});
+				_swCycle.Stop();
+				var t = _swCycle.Elapsed.TotalMilliseconds;
+				// Console.WriteLine($"Cycle on: lumen on video -> {t}ms.");
 			}
 			catch (Exception e)
 			{
