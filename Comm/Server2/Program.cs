@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 namespace Server2
 {
-	class Program
+	class Program // On Video
 	{
 		private WebSocketServer _webSocketServer;
 		private int _clientSocketID = -1;
@@ -121,14 +121,14 @@ namespace Server2
 									{
 										_sw.Reset();
 										_sw.Restart();
-										var json = Encoding.UTF8.GetString(bytes);
-										var message =
-											_serializer
-												.Deserialize<WebSocketMessageRequest<UpdateNewImageMessageBytes>>(json);
+										// var json = Encoding.UTF8.GetString(bytes);
+										// var message =
+										// 	_serializer
+										// 		.Deserialize<WebSocketMessageRequest<UpdateNewImageMessageBytes>>(json);
+										var message = WebSocketMessageRequest<UpdateNewImageMessageBytes>.FromJson(bytes);
 										_sw.Stop();
 										var t11 = _sw.Elapsed.TotalMilliseconds;
 										Console.WriteLine(t11);
-										// var message = WebSocketMessageRequest<UpdateNewImageMessageBytes>.FromJson(bytes);
 
 										// var frame = _videoFrameReader.ConvertFrameFromBytes(message.messageData.MessageData.ImageData);
 										var frame = _videoFrameReader.ConvertFrameFromBytes(message.messageData.MessageData.ImageData);
@@ -171,7 +171,7 @@ namespace Server2
 			}
 		}
 
-		private JavaScriptSerializer _serializer = new JavaScriptSerializer();
+		// private JavaScriptSerializer _serializer = new JavaScriptSerializer();
 
 		private UpdateNewImageResponseMessage initResponse(UpdateNewImageResponseMessageData responseData)
 		{
@@ -238,15 +238,15 @@ namespace Server2
 
 		private void _webSocketServer_TextMessageReceived(string msg, int socketID)
 		{
-			WebSocketMessageRequest wrq = WebSocketMessageRequest.CreateWebSocketMessageRequestFromJSON(msg);
-			switch (wrq.requestHeader)
-			{
-				case "TestRequest":
-					WebSocketMessageRequest<SampleData> wrq1 = new WebSocketMessageRequest<SampleData>(msg);
-					Console.WriteLine($"Got request {wrq1.requestHeader} with data {wrq1.messageData}");
-					WebSocketMessageResponse<string> wrsp = new WebSocketMessageResponse<string>("TestResponse", "Success", "");
-					break;
-			}
+			// WebSocketMessageRequest wrq = WebSocketMessageRequest.CreateWebSocketMessageRequestFromJSON(msg);
+			// switch (wrq.requestHeader)
+			// {
+			// 	case "TestRequest":
+			// 		WebSocketMessageRequest<SampleData> wrq1 = new WebSocketMessageRequest<SampleData>(msg);
+			// 		Console.WriteLine($"Got request {wrq1.requestHeader} with data {wrq1.messageData}");
+			// 		WebSocketMessageResponse<string> wrsp = new WebSocketMessageResponse<string>("TestResponse", "Success", "");
+			// 		break;
+			// }
 		}
 	}
 }

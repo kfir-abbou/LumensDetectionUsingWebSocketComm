@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Comm.Model;
 using CommunityToolkit.Mvvm.Messaging;
 using LumenDetection.Tests.LumenDataHandle;
 using SD.Framework.Infrastructure.Commands;
@@ -13,6 +14,14 @@ namespace LumenDetection.Tests.ViewModels
 		private IMessenger _messenger;
 		public ICommand StartCommand => new RelayCommand(onStart);
 
+
+		public MainViewModel()
+		{
+			WeakReferenceMessenger.Default.Register<TimeMessage>(this, (recipient, message) =>
+			{
+
+			});
+		}
 		private void onStart(object obj)
 		{
 			WeakReferenceMessenger.Default.Send(new StartHandlingVideoMessage());

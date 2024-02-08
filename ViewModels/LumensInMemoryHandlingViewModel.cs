@@ -20,7 +20,7 @@ namespace LumenDetection.Tests.ViewModels
 	public class LumensInMemoryHandlingViewModel : INotifyPropertyChanged
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
-
+		private readonly Stopwatch _sw = new Stopwatch();
 		private readonly VideoFrameReader _vfr;
 		private readonly LumenInMemoryHandler _lumenDataHandler;
 		private BitmapSource _currentFrame;
@@ -59,6 +59,57 @@ namespace LumenDetection.Tests.ViewModels
 			_lumenDataHandler.InitAlgoResponseReceived += onInitAlgoResponseReceived;
 		}
 
+		private void onLumensMessageReceived(object sender, UpdateImageResponseReceivedEventArgs eventArgs)
+		{
+			_stopwatch.Reset();
+			_stopwatch.Start();
+			try
+			{
+				Application.Current.Dispatcher.InvokeAsync(() => // Ensure UI updates on the UI thread
+				{
+					// var bitmapImage = DrawLumensHelper.ConvertVideoFrameByteArrayToBitmapSource(eventArgs.FrameBytes);
+					var bitmapImage = DrawLumensHelper.ConvertVideoFrameStringToBitmapSource(eventArgs.FrameStr);
+					var lumens = DrawLumensHelper.ConvertDataToFitScreen(eventArgs.Response.LumensCoordinates);
+
+					CurrentFrame = bitmapImage;
+					Circles.Clear();
+					addCircles(lumens);
+				});
+				_sw.Stop();
+				_stopwatch.Stop();
+				var t1 = _sw.Elapsed.TotalMilliseconds;
+				// var t2 = _stopwatch.Elapsed.TotalMilliseconds;
+				Console.WriteLine($"Cycle -> {t1} ms");
+
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				throw;
+			}
+		}
+
+		private async Task startHandlingVideo()
+		{
+
+			await Task.Run(async () =>
+			{
+				var frames = _vfr.GetVideoFrames(@"C:\Temp\Video\ct.avi");
+				foreach (var frame in frames)
+				{
+					_sw.Reset();
+					_sw.Restart();
+
+					var frameAsBytes = _vfr.ConvertFrameToBytes(frame);
+					await _lumenDataHandler.HandleVideoFrame((uint)frame.Width, (uint)frame.Height, frameAsBytes);
+					// _sw.Stop();
+					// var t  = _sw.Elapsed.TotalMilliseconds;
+					// Console.WriteLine(t);
+					await Task.Delay(33);
+				}
+			});
+		}
+
 		private void onInitAlgoResponseReceived()
 		{
 			startStreamingVideo();
@@ -89,35 +140,7 @@ namespace LumenDetection.Tests.ViewModels
 
 		private readonly Stopwatch _stopwatch = new Stopwatch();
 
-		private void onLumensMessageReceived(object sender, UpdateImageResponseReceivedEventArgs eventArgs)
-		{
-			_stopwatch.Reset();
-			_stopwatch.Start();
-			try
-			{
-				Application.Current.Dispatcher.InvokeAsync(() => // Ensure UI updates on the UI thread
-				{
-					// var bitmapImage = DrawLumensHelper.ConvertVideoFrameByteArrayToBitmapSource(eventArgs.FrameBytes);
-					var bitmapImage = DrawLumensHelper.ConvertVideoFrameStringToBitmapSource(eventArgs.FrameStr);
-					var lumens = DrawLumensHelper.ConvertDataToFitScreen(eventArgs.Response.LumensCoordinates);
-
-					CurrentFrame = bitmapImage;
-					Circles.Clear();
-					addCircles(lumens);
-				});
-				_sw.Stop();
-				_stopwatch.Stop();
-				// var t1 = _sw.Elapsed.TotalMilliseconds;
-				// Console.WriteLine($"In Memory -> {t1} ms");
-				var t2 = _stopwatch.Elapsed.TotalMilliseconds;
-				
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e);
-				throw;
-			}
-		}
+	
 
 		private void addCircles(IEnumerable<LumensCoordinates> lumens)
 		{
@@ -139,24 +162,7 @@ namespace LumenDetection.Tests.ViewModels
 			
 		}
 
-		private Stopwatch _sw = new Stopwatch();
-		private async Task startHandlingVideo()
-		{
-
-			await Task.Run(async () =>
-			{
-				var frames = _vfr.GetVideoFrames(@"C:\Temp\Video\ct.avi");
-				foreach (var frame in frames)
-				{
-					_sw.Reset();
-					_sw.Restart();
-
-					var frameAsBytes = _vfr.ConvertFrameToBytes(frame);
-					await _lumenDataHandler.HandleVideoFrame((uint)frame.Width, (uint)frame.Height, frameAsBytes);
-					await Task.Delay(33);
-				}
-			});
-		}
+		
 
 
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

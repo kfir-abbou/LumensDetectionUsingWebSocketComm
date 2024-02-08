@@ -56,31 +56,31 @@ namespace Client
 
 		private void _websocketClient_TextMessageReceived(string msg, int socketID)
 		{
-			WebSocketMessageRequest wrq = WebSocketMessageRequest.CreateWebSocketMessageRequestFromJSON(msg);
-			if (wrq != null)
-			{
-				switch (wrq.requestHeader)
-				{
-					case "CTCoordsRequest":
-						WebSocketMessageRequest<SampleData2> wrq1 = new WebSocketMessageRequest<SampleData2>(msg);
-						Console.WriteLine($"Got request {wrq1.requestHeader} with data {wrq1.messageData}");
-						break;
-				}
-			}
-			else
-			{
-				WebSocketMessageResponse wrsp = WebSocketMessageResponse.CreateWebSocketMessageResponseFromJSON(msg);
-				if (wrq != null)
-				{
-					switch (wrsp.responseHeader)
-					{
-						case "TestResponse":
-							WebSocketMessageResponse<string> wrsp1 = new WebSocketMessageResponse<string>(msg);
-							Console.WriteLine($"Got response {wrsp1.responseHeader} with status {wrsp1.responseStatus} with data {wrsp1.messageData}");
-							break;
-					}
-				}
-			}
+			// WebSocketMessageRequest wrq = WebSocketMessageRequest.CreateWebSocketMessageRequestFromJSON(msg);
+			// if (wrq != null)
+			// {
+			// 	switch (wrq.requestHeader)
+			// 	{
+			// 		case "CTCoordsRequest":
+			// 			WebSocketMessageRequest<SampleData2> wrq1 = new WebSocketMessageRequest<SampleData2>(msg);
+			// 			Console.WriteLine($"Got request {wrq1.requestHeader} with data {wrq1.messageData}");
+			// 			break;
+			// 	}
+			// }
+			// else
+			// {
+			// 	WebSocketMessageResponse wrsp = WebSocketMessageResponse.CreateWebSocketMessageResponseFromJSON(msg);
+			// 	if (wrq != null)
+			// 	{
+			// 		switch (wrsp.responseHeader)
+			// 		{
+			// 			case "TestResponse":
+			// 				WebSocketMessageResponse<string> wrsp1 = new WebSocketMessageResponse<string>(msg);
+			// 				Console.WriteLine($"Got response {wrsp1.responseHeader} with status {wrsp1.responseStatus} with data {wrsp1.messageData}");
+			// 				break;
+			// 		}
+			// 	}
+			// }
 		}
 	}
 }

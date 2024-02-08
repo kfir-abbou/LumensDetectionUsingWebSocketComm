@@ -24,7 +24,7 @@ namespace LumenDetection.Tests.ViewModels
 		private readonly LumenOnVideoStreamHandler _lumenOnVideoStreamHandler;
 		private readonly VideoFrameReader _vfr;
 		private BitmapSource _currentFrame;
-		
+
 		public ObservableCollection<Circle> Circles { get; set; } = new();
 		public BitmapSource CurrentFrame
 		{
@@ -42,7 +42,7 @@ namespace LumenDetection.Tests.ViewModels
 		{
 			WeakReferenceMessenger.Default.Register<StartHandlingVideoMessage>(this, sendInitToAlgo);
 			_vfr = new VideoFrameReader();
-			 
+
 			_lumenOnVideoStreamHandler = new LumenOnVideoStreamHandler(new CommInfra("localhost", "example2", 8075));
 			_lumenOnVideoStreamHandler.InitResponseReceived += LumenOnVideoStreamHandlerOnInitResponseReceived;
 			_lumenOnVideoStreamHandler.LumensMessageReceived += LumenOnVideoStreamHandlerOnLumensMessageReceived;
@@ -74,14 +74,13 @@ namespace LumenDetection.Tests.ViewModels
 						var frameBytes = _vfr.ConvertFrameToBytes(frame);
 
 						await _lumenOnVideoStreamHandler.HandleVideoFrame((uint)frame.Width, (uint)frame.Height, frameBytes);
-						
+
 						Application.Current.Dispatcher.InvokeAsync(() =>
 						{
 							var bitmapSource = DrawLumensHelper.ConvertVideoFrameByteArrayToBitmapSource(frameBytes);
 							CurrentFrame = bitmapSource;
 						});
-						 
-					 
+
 						await Task.Delay(33);
 					}
 				}
@@ -96,7 +95,7 @@ namespace LumenDetection.Tests.ViewModels
 
 		private readonly Stopwatch _sw = new();
 		private readonly Stopwatch _swCycle = new();
-		 
+
 		private void LumenOnVideoStreamHandlerOnLumensMessageReceived(object sender, IEnumerable<LumensCoordinates> lumensCoordinates)
 		{
 			try
@@ -109,7 +108,7 @@ namespace LumenDetection.Tests.ViewModels
 				});
 				_swCycle.Stop();
 				var t = _swCycle.Elapsed.TotalMilliseconds;
-				// Console.WriteLine($"Cycle on: lumen on video -> {t}ms.");
+				Console.WriteLine($"Cycle on: lumen on video -> {t}ms.");
 			}
 			catch (Exception e)
 			{
