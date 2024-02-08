@@ -58,6 +58,13 @@ namespace LumenDetection.Tests.ViewModels
 			_lumenDataHandler.LumensMessageReceived += onLumensMessageReceived;
 		}
 
+		private void sendInitMessageToAlgo(object recipient, StartHandlingVideoMessage message)
+		{
+			if (message.Start)
+			{
+				
+			}
+		}
 		private void startStreamingVideo(object recipient, StartHandlingVideoMessage message)
 		{
 			Task.Run(async () =>

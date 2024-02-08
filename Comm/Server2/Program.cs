@@ -45,7 +45,7 @@ namespace Server2
 				_webSocketServer.TextMessageReceived += _webSocketServer_TextMessageReceived;
 				_webSocketServer.BinaryMessageReceived += _webSocketServer_BinaryMessageReceived;
 				_webSocketServer.SocketClosed += _webSocketServer_SocketClosed;
-				
+
 				await _webSocketServer.StartServer("localhost", "example2", 8075);
 				var cancellationToken = new CancellationToken();
 				await Task.Run(handleMessageOnQueue, cancellationToken);
@@ -107,8 +107,12 @@ namespace Server2
 							{
 								case "InitLumenDetectionRequest":
 									{
-										var jsonResponse = new WebSocketMessageResponse<InitLumenDetectionResponseMessage>("OK").ToJSON();
-										var data = Encoding.UTF8.GetBytes(jsonResponse);
+										var response = new InitLumenDetectionResponseMessage("OK");
+										var jsonResponse =
+											new WebSocketMessageResponse<InitLumenDetectionResponseMessage>(
+												"InitLumenDetectionResponse", "OK", response);
+										var json = jsonResponse.ToJSON();
+										var data = Encoding.UTF8.GetBytes(json);
 										_webSocketServer.SendBinary(data, _clientSocketID);
 										break;
 									}

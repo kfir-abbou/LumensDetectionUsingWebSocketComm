@@ -42,14 +42,27 @@ namespace LumenDetection.Tests.ViewModels
 		private IMessenger _messenger;
 		public LumenOnVideoViewModel()
 		{
-			WeakReferenceMessenger.Default.Register<StartHandlingVideoMessage>(this, startStreamingVideo);
+			WeakReferenceMessenger.Default.Register<StartHandlingVideoMessage>(this, sendInitToAlgo);
 			_vfr = new VideoFrameReader();
 			 
 			_lumenOnVideoStreamHandler = new LumenOnVideoStreamHandler(new CommInfra("localhost", "example2", 8075));
+			_lumenOnVideoStreamHandler.InitResponseReceived += LumenOnVideoStreamHandlerOnInitResponseReceived;
 			_lumenOnVideoStreamHandler.LumensMessageReceived += LumenOnVideoStreamHandlerOnLumensMessageReceived;
 		}
 
-		private void startStreamingVideo(object recipient, StartHandlingVideoMessage message)
+		private void LumenOnVideoStreamHandlerOnInitResponseReceived()
+		{
+			startStreamingVideo();
+		}
+
+		private void sendInitToAlgo(object recipient, StartHandlingVideoMessage message)
+		{
+			if (message.Start)
+			{
+				_lumenOnVideoStreamHandler.SendInitAlgoRequest();
+			}
+		}
+		private void startStreamingVideo()
 		{
 			Task.Run(async () =>
 			{

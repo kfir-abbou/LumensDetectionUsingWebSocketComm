@@ -16,6 +16,7 @@ namespace LumenDetection.Tests.Comm.Client
 		private readonly Queue<byte[]> _messageQueue = new();
 
 		public event EventHandler<UpdateNewImageResponseMessage> UpdateImageResponse;
+		public event EventHandler<string> InitAlgoResponse;
 
 		public CommInfra(string address, string addressPostfix, int port) : base(address, addressPostfix, port)
 		{
@@ -40,8 +41,10 @@ namespace LumenDetection.Tests.Comm.Client
 							UpdateImageResponse?.Invoke(null, msg.messageData);
 							break;
 						}
-						case "":
+						case "InitLumenDetectionResponse":
 						{
+							var msg = WebSocketMessageResponse<InitLumenDetectionResponseMessage>.FromJson(bytes);
+							InitAlgoResponse?.Invoke(null, msg.messageData.Status);
 							break;
 						}
 					}

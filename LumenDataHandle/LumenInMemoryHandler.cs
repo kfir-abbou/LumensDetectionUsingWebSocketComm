@@ -20,6 +20,13 @@ namespace LumenDetection.Tests.LumenDataHandle
 		{
 			_commInfra = commInfra;
 			_commInfra.UpdateImageResponse += onUpdateImageResponse;
+			_commInfra.InitAlgoResponse += onInitAlgoResponse;
+
+		}
+
+		private void onInitAlgoResponse(object sender, string e)
+		{
+			
 		}
 
 		private void onUpdateImageResponse(object sender, UpdateNewImageResponseMessage response)	

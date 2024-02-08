@@ -24,6 +24,15 @@ namespace LumenDetection.Tests.LumenDataHandle
 		{
 			_commInfra = commInfra;
 			_commInfra.UpdateImageResponse += onUpdateImageResponse;
+			_commInfra.InitAlgoResponse += onInitAlgoResponse;
+		}
+
+		private void onInitAlgoResponse(object sender, string status)
+		{
+			if (status.ToLower() == "ok")
+			{
+				InitResponseReceived?.Invoke();
+			}
 		}
 
 		private void onUpdateImageResponse(object sender, UpdateNewImageResponseMessage response)
@@ -71,7 +80,7 @@ namespace LumenDetection.Tests.LumenDataHandle
 
 		public void SendInitAlgoRequest()
 		{
-			var initMsgData = new InitLumenDetectionMessageData(string.Empty, string.Empty, string.Empty, string.Empty);
+			var initMsgData = new InitLumenDetectionMessageData("string.Empty", "string.Empty", "string.Empty", "string.Empty");
 			var initRequest = new InitLumenDetectionRequestMessage(initMsgData);
 			var req = new WebSocketMessageRequest<InitLumenDetectionRequestMessage>(initRequest.MessageHeader,
 				initRequest);
